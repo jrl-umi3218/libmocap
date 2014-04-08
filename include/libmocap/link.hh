@@ -50,7 +50,7 @@ namespace libmocap
     ~Link ();
     Link& operator= (const Link& rhs);
 
-    LIBMOCAP_ACCESSOR (name, string);
+    LIBMOCAP_ACCESSOR (name, std::string);
     LIBMOCAP_ACCESSOR (color, Color);
     LIBMOCAP_ACCESSOR (type, LinkType);
     LIBMOCAP_ACCESSOR (marker1, int);

@@ -78,9 +78,9 @@ namespace libmocap
     Segment& operator= (const Segment& rhs);
 
     LIBMOCAP_ACCESSOR (id, int);
-    LIBMOCAP_ACCESSOR (name, string);
+    LIBMOCAP_ACCESSOR (name, std::string);
     LIBMOCAP_ACCESSOR (children, std::vector<Segment*>);
-    LIBMOCAP_ACCESSOR (originMarker, SegmentType);
+    LIBMOCAP_ACCESSOR (originMarker, int);
     LIBMOCAP_ACCESSOR (longAxisMarker, int);
     LIBMOCAP_ACCESSOR (planeAxisMarker, int);
     LIBMOCAP_ACCESSOR (rotationOffset, RotationOffset);
@@ -88,7 +88,7 @@ namespace libmocap
     int id_;
     std::string name_;
     std::vector<Segment*> children_;
-    SegmentType type_;
+    int originMarker_;
     int longAxisMarker_;
     int planeAxisMarker_;
     RotationOffset rotationOffset_;

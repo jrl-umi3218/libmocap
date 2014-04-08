@@ -39,7 +39,7 @@ namespace libmocap
   public:
     Pose ();
     ~Pose ();
-    Segment& operator= (const Segment& rhs);
+    Pose& operator= (const Pose& rhs);
 
     LIBMOCAP_ACCESSOR (positions, std::vector<double>);
   private:

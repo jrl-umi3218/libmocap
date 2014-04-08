@@ -28,28 +28,22 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef LIBMOCAP_COLOR_HH
-# define LIBMOCAP_COLOR_HH
-# include <stdint.h>
-
-# include <libmocap/util.hh>
+#include <libmocap/marker-set.hh>
 
 namespace libmocap
 {
-  class Color
+  MarkerSet::MarkerSet ()
+  {}
+
+  MarkerSet::~MarkerSet ()
+  {}
+
+  MarkerSet&
+  MarkerSet::operator= (const MarkerSet& rhs)
   {
-  public:
-    Color ();
+    if (&rhs == this)
+      return *this;
+    return *this;
+  }
 
-    LIBMOCAP_ACCESSOR (color, uint32_t);
-
-    uint8_t red ();
-    uint8_t green ();
-    uint8_t blue ();
-    uint8_t alpha ();
-  private:
-    uint32_t color_;
-  };
 } // end of namespace libmocap.
-
-#endif //! LIBMOCAP_COLOR_HH

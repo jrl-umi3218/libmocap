@@ -39,7 +39,7 @@
   struct e_n_d__w_i_t_h__s_e_m_i__c_o_l_o_n
 
 # define LIBMOCAP_RVALUE_ACCESSOR(ATTR, TYPE)	\
-  TYPE& ATTR () const				\
+  TYPE& ATTR ()					\
   {						\
     return ATTR##_;				\
   }						\

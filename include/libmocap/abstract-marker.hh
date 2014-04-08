@@ -46,7 +46,7 @@ namespace libmocap
     AbstractMarker& operator= (const AbstractMarker& rhs);
 
     LIBMOCAP_ACCESSOR (id, int);
-    LIBMOCAP_ACCESSOR (name, string);
+    LIBMOCAP_ACCESSOR (name, std::string);
     LIBMOCAP_ACCESSOR (color, Color);
     LIBMOCAP_ACCESSOR (physicalColor, Color);
     LIBMOCAP_ACCESSOR (size, double);

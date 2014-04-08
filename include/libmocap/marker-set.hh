@@ -83,8 +83,8 @@ namespace libmocap
     ~MarkerSet ();
     MarkerSet& operator= (const MarkerSet& rhs);
 
-    LIBMOCAP_ACCESSOR (name, string);
-    LIBMOCAP_ACCESSOR (markers, std::vector<AbstractMarker>);
+    LIBMOCAP_ACCESSOR (name, std::string);
+    LIBMOCAP_ACCESSOR (markers, std::vector<AbstractMarker*>);
     LIBMOCAP_ACCESSOR (links, std::vector<Link>);
     LIBMOCAP_ACCESSOR (segments, std::vector<Segment>);
     LIBMOCAP_ACCESSOR (poses, std::vector<Pose>);
