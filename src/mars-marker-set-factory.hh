@@ -30,6 +30,7 @@
 
 #ifndef LIBMOCAP_MARS_MARKER_SET_FACTORY_HH
 # define LIBMOCAP_MARS_MARKER_SET_FACTORY_HH
+# include <iosfwd>
 # include <string>
 
 # include <libmocap/marker-set.hh>
@@ -46,6 +47,18 @@ namespace libmocap
     MarkerSet load (const std::string& filename);
 
     static bool canLoad (const std::string& filename);
+
+    void loadGeneralInformation (MarkerSet& markerSet, std::ifstream& file);
+    void loadMarkers (MarkerSet& markerSet, std::ifstream& file);
+    void loadVirtualMarkers (MarkerSet& markerSet, std::ifstream& file);
+    void loadVMJoinDefs (MarkerSet& markerSet, std::ifstream& file);
+    void loadLinkages (MarkerSet& markerSet, std::ifstream& file);
+    void loadSkeletonType (MarkerSet& markerSet, std::ifstream& file);
+    void loadHtrExportOptions (MarkerSet& markerSet, std::ifstream& file);
+    void loadSegments (MarkerSet& markerSet, std::ifstream& file);
+    void loadModelPose (MarkerSet& markerSet, std::ifstream& file);
+    void loadPersonalInfo (MarkerSet& markerSet, std::ifstream& file);
+
   };
 } // end of namespace libmocap.
 

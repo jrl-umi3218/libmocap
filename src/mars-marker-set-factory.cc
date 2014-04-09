@@ -28,11 +28,32 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <algorithm>
+#include <fstream>
 #include <stdexcept>
 #include "mars-marker-set-factory.hh"
 
 namespace libmocap
 {
+  struct SectionMapper
+  {
+    const char* section;
+    void (MarsMarkerSetFactory::*loader) (MarkerSet&, std::ifstream&);
+  };
+
+  static const SectionMapper sectionMapper[] = {
+    {"General Information", &MarsMarkerSetFactory::loadGeneralInformation},
+    {"Markers", &MarsMarkerSetFactory::loadMarkers},
+    {"VirtualMarkers", &MarsMarkerSetFactory::loadVirtualMarkers},
+    {"VMJoinDefs", &MarsMarkerSetFactory::loadVMJoinDefs},
+    {"Linkages", &MarsMarkerSetFactory::loadLinkages},
+    {"SkeletonTypes", &MarsMarkerSetFactory::loadSkeletonType},
+    {"HtrExportOptions", &MarsMarkerSetFactory::loadHtrExportOptions},
+    {"Segments", &MarsMarkerSetFactory::loadSegments},
+    {"ModelPose", &MarsMarkerSetFactory::loadModelPose},
+    {"Personal Info", &MarsMarkerSetFactory::loadPersonalInfo},
+    {0, 0}
+  };
+
   static std::string extractExtension (const std::string& filename)
   {
     std::string::size_type idx = filename.rfind ('.');
@@ -58,11 +79,118 @@ namespace libmocap
   }
 
   MarkerSet
-  MarsMarkerSetFactory::load (const std::string& /*filename*/)
+  MarsMarkerSetFactory::load (const std::string& filename)
   {
+    std::ifstream file (filename.c_str ());
+    file.exceptions (std::ifstream::failbit | std::ifstream::badbit);
+
     MarkerSet result;
+
+    std::string line;
+    while (!file.eof ())
+      {
+	std::getline (file, line);
+	if (line[0] != '[')
+	  {
+	    std::string error = "failed to load `"
+	      + filename
+	      + "': invalid format (a section was expected but `"
+	      + line[0] + "' was found)";
+	    throw std::runtime_error (error);
+	  }
+	line = line.substr (1, line.size () - 3);
+
+	const SectionMapper* mapper = sectionMapper;
+	while (mapper && mapper->section != 0)
+	  {
+	    if (line == mapper->section)
+	      {
+		(this->*(mapper->loader)) (result, file);
+		break;
+	      }
+	    ++mapper;
+	  }
+	if (mapper && mapper->section == 0)
+	  {
+	    std::string error =
+	      "failed to load file `"
+	      + filename
+	      + "': unknown section `"
+	      + line + "'";
+	    throw std::runtime_error (error);
+	  }
+      }
     return result;
   }
+
+  void
+  MarsMarkerSetFactory::loadGeneralInformation (MarkerSet& /*markerSet*/, std::ifstream& file)
+  {
+    std::string line;
+    std::string variable;
+    std::string value;
+    std::string::size_type idx;
+
+    while (!file.eof () && file.peek () != '[')
+      {
+	std::getline (file, line);
+
+	idx = line.find ('=');
+	if (idx == std::string::npos)
+	  throw std::runtime_error ("invalid syntax while parsing file");
+
+	variable = line.substr (0, idx);
+	value = line.substr (idx + 1);
+
+	//FIXME: find an elegant way to map variables to action
+      }
+  }
+
+  void
+  MarsMarkerSetFactory::loadMarkers (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  {
+  }
+
+  void
+  MarsMarkerSetFactory::loadVirtualMarkers (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  {
+  }
+
+  void
+  MarsMarkerSetFactory::loadVMJoinDefs (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  {
+  }
+
+  void
+  MarsMarkerSetFactory::loadLinkages (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  {
+  }
+
+  void
+  MarsMarkerSetFactory::loadSkeletonType (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  {
+  }
+
+  void
+  MarsMarkerSetFactory::loadHtrExportOptions (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  {
+  }
+
+  void
+  MarsMarkerSetFactory::loadSegments (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  {
+  }
+
+  void
+  MarsMarkerSetFactory::loadModelPose (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  {
+  }
+
+  void
+  MarsMarkerSetFactory::loadPersonalInfo (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  {
+  }
+
 
   bool
   MarsMarkerSetFactory::canLoad (const std::string& filename)
