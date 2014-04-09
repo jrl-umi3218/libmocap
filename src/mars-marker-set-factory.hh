@@ -27,41 +27,26 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#include <sstream>
-#include <stdexcept>
-#include <libmocap/marker-set-factory.hh>
 
-#include "mars-marker-set-factory.hh"
+#ifndef LIBMOCAP_MARS_MARKER_SET_FACTORY_HH
+# define LIBMOCAP_MARS_MARKER_SET_FACTORY_HH
+# include <string>
+
+# include <libmocap/marker-set.hh>
 
 namespace libmocap
 {
-  MarkerSetFactory::MarkerSetFactory ()
-  {}
-
-  MarkerSetFactory::~MarkerSetFactory ()
-  {}
-
-  MarkerSetFactory&
-  MarkerSetFactory::operator= (const MarkerSetFactory& rhs)
+  class MarsMarkerSetFactory
   {
-    if (this == &rhs)
-      return *this;
-    return *this;
-  }
+  public:
+    MarsMarkerSetFactory ();
+    ~MarsMarkerSetFactory ();
+    MarsMarkerSetFactory& operator= (const MarsMarkerSetFactory& rhs);
 
-  MarkerSet
-  MarkerSetFactory::load (const std::string& filename)
-  {
-    if (MarsMarkerSetFactory::canLoad (filename))
-      {
-	MarsMarkerSetFactory factory;
-	return factory.load (filename);
-      }
+    MarkerSet load (const std::string& filename);
 
-    std::stringstream error;
-    error << "failed to load "
-	  << filename
-	  << "': file format not supported";
-    throw std::runtime_error (error.str ());
-  }
+    static bool canLoad (const std::string& filename);
+  };
 } // end of namespace libmocap.
+
+#endif //! LIBMOCAP_MARS_MARKER_SET_HH

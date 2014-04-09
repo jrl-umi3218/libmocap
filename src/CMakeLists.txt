@@ -3,6 +3,7 @@ ADD_LIBRARY(
   abstract-marker.cc
   abstract-virtual-marker.cc
   link.cc
+  mars-marker-set-factory.cc
   marker-set-factory.cc
   marker-set.cc
   marker.cc

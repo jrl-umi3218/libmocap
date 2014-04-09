@@ -27,22 +27,30 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#include <sstream>
+#include <algorithm>
 #include <stdexcept>
-#include <libmocap/marker-set-factory.hh>
-
 #include "mars-marker-set-factory.hh"
 
 namespace libmocap
 {
-  MarkerSetFactory::MarkerSetFactory ()
+  static std::string extractExtension (const std::string& filename)
+  {
+    std::string::size_type idx = filename.rfind ('.');
+    if (idx != std::string::npos)
+      return filename.substr (idx + 1);
+    else
+      return filename;
+  }
+
+
+  MarsMarkerSetFactory::MarsMarkerSetFactory ()
   {}
 
-  MarkerSetFactory::~MarkerSetFactory ()
+  MarsMarkerSetFactory::~MarsMarkerSetFactory ()
   {}
 
-  MarkerSetFactory&
-  MarkerSetFactory::operator= (const MarkerSetFactory& rhs)
+  MarsMarkerSetFactory&
+  MarsMarkerSetFactory::operator= (const MarsMarkerSetFactory& rhs)
   {
     if (this == &rhs)
       return *this;
@@ -50,18 +58,17 @@ namespace libmocap
   }
 
   MarkerSet
-  MarkerSetFactory::load (const std::string& filename)
+  MarsMarkerSetFactory::load (const std::string& /*filename*/)
   {
-    if (MarsMarkerSetFactory::canLoad (filename))
-      {
-	MarsMarkerSetFactory factory;
-	return factory.load (filename);
-      }
+    MarkerSet result;
+    return result;
+  }
 
-    std::stringstream error;
-    error << "failed to load "
-	  << filename
-	  << "': file format not supported";
-    throw std::runtime_error (error.str ());
+  bool
+  MarsMarkerSetFactory::canLoad (const std::string& filename)
+  {
+    std::string extension = extractExtension (filename);
+    std::transform (extension.begin (), extension.end(), extension.begin(), ::tolower);
+    return extension == "mars";
   }
 } // end of namespace libmocap.
