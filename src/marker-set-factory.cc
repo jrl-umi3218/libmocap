@@ -27,8 +27,8 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#include <sstream>
 #include <stdexcept>
+#include <string>
 #include <libmocap/marker-set-factory.hh>
 
 #include "mars-marker-set-factory.hh"
@@ -58,10 +58,10 @@ namespace libmocap
 	return factory.load (filename);
       }
 
-    std::stringstream error;
-    error << "failed to load "
-	  << filename
-	  << "': file format not supported";
-    throw std::runtime_error (error.str ());
+    std::string error;
+    error = "failed to load "
+      + filename
+      + "': file format not supported";
+    throw std::runtime_error (error);
   }
 } // end of namespace libmocap.
