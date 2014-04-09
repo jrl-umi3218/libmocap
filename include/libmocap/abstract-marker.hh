@@ -31,14 +31,14 @@
 #ifndef LIBMOCAP_ABSTRACT_MARKER_HH
 # define LIBMOCAP_ABSTRACT_MARKER_HH
 # include <string>
-# include <vector>
 
+# include <libmocap/config.hh>
 # include <libmocap/color.hh>
 # include <libmocap/util.hh>
 
 namespace libmocap
 {
-  class AbstractMarker
+  class LIBMOCAP_DLLEXPORT AbstractMarker
   {
   public:
     AbstractMarker ();

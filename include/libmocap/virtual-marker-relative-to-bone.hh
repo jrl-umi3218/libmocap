@@ -30,12 +30,13 @@
 
 #ifndef LIBMOCAP_VIRTUAL_MARKER_RELATIVE_TO_BONE_HH
 # define LIBMOCAP_VIRTUAL_MARKER_RELATIVE_TO_BONE_HH
+# include <libmocap/config.hh>
 # include <libmocap/abstract-virtual-marker.hh>
 # include <libmocap/util.hh>
 
 namespace libmocap
 {
-  class VirtualMarkerRelativeToBone : public AbstractVirtualMarker
+  class LIBMOCAP_DLLEXPORT VirtualMarkerRelativeToBone : public AbstractVirtualMarker
   {
   public:
     VirtualMarkerRelativeToBone ();

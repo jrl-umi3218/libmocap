@@ -30,11 +30,12 @@
 
 #ifndef LIBMOCAP_MARKER_HH
 # define LIBMOCAP_MARKER_HH
+# include <libmocap/config.hh>
 # include <libmocap/abstract-marker.hh>
 
 namespace libmocap
 {
-  class Marker : public AbstractMarker
+  class LIBMOCAP_DLLEXPORT Marker : public AbstractMarker
   {
   public:
     Marker ();

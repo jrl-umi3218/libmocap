@@ -32,9 +32,12 @@
 # define LIBMOCAP_POSE_HH
 # include <vector>
 
+# include <libmocap/config.hh>
+# include <libmocap/util.hh>
+
 namespace libmocap
 {
-  class Pose
+  class LIBMOCAP_DLLEXPORT Pose
   {
   public:
     Pose ();

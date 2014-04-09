@@ -1,6 +1,16 @@
 ADD_LIBRARY(
   mocap SHARED
+  abstract-marker.cc
+  abstract-virtual-marker.cc
+  link.cc
+  marker-set-factory.cc
   marker-set.cc
+  marker.cc
+  pose.cc
+  segment.cc
+  virtual-marker-measured.cc
+  virtual-marker-ratio.cc
+  virtual-marker-relative-to-bone.cc
   )
 SET_TARGET_PROPERTIES(
   mocap PROPERTIES

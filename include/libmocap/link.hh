@@ -31,14 +31,14 @@
 #ifndef LIBMOCAP_LINK_HH
 # define LIBMOCAP_LINK_HH
 # include <string>
-# include <vector>
 
+# include <libmocap/config.hh>
 # include <libmocap/color.hh>
 # include <libmocap/util.hh>
 
 namespace libmocap
 {
-  class Link
+  class LIBMOCAP_DLLEXPORT Link
   {
   public:
     enum LinkType

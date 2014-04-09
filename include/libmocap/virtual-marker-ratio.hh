@@ -30,12 +30,14 @@
 
 #ifndef LIBMOCAP_VIRTUAL_MARKER_RATIO_HH
 # define LIBMOCAP_VIRTUAL_MARKER_RATIO_HH
+# include <vector>
+# include <libmocap/config.hh>
 # include <libmocap/abstract-virtual-marker.hh>
 # include <libmocap/util.hh>
 
 namespace libmocap
 {
-  class VirtualMarkerRatio : public AbstractVirtualMarker
+  class LIBMOCAP_DLLEXPORT VirtualMarkerRatio : public AbstractVirtualMarker
   {
   public:
     VirtualMarkerRatio ();

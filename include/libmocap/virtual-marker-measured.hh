@@ -30,12 +30,15 @@
 
 #ifndef LIBMOCAP_VIRTUAL_MARKER_MEASURED_HH
 # define LIBMOCAP_VIRTUAL_MARKER_MEASURED_HH
+# include <vector>
+
+# include <libmocap/config.hh>
 # include <libmocap/abstract-virtual-marker.hh>
 # include <libmocap/util.hh>
 
 namespace libmocap
 {
-  class VirtualMarkerMeasured : public AbstractVirtualMarker
+  class LIBMOCAP_DLLEXPORT VirtualMarkerMeasured : public AbstractVirtualMarker
   {
   public:
     VirtualMarkerMeasured ();

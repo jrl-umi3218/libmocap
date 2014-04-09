@@ -33,6 +33,7 @@
 # include <string>
 # include <vector>
 
+# include <libmocap/config.hh>
 # include <libmocap/abstract-marker.hh>
 # include <libmocap/link.hh>
 # include <libmocap/pose.hh>
@@ -76,7 +77,7 @@ namespace libmocap
   /// one can define a 6D frame (position and orientation). Notably,
   /// frames can be used to track reference frames attached to bodies
   /// of an articulated system.
-  class MarkerSet
+  class LIBMOCAP_DLLEXPORT MarkerSet
   {
   public:
     MarkerSet ();

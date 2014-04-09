@@ -30,12 +30,13 @@
 
 #ifndef LIBMOCAP_ABSTRACT_VIRTUAL_MARKER_HH
 # define LIBMOCAP_ABSTRACT_VIRTUAL_MARKER_HH
+# include <libmocap/config.hh>
 # include <libmocap/abstract-marker.hh>
 # include <libmocap/util.hh>
 
 namespace libmocap
 {
-  class AbstractVirtualMarker
+  class LIBMOCAP_DLLEXPORT AbstractVirtualMarker
   {
   public:
     AbstractVirtualMarker ();

@@ -32,15 +32,14 @@
 # define LIBMOCAP_COLOR_HH
 # include <stdint.h>
 
+# include <libmocap/config.hh>
 # include <libmocap/util.hh>
 
 namespace libmocap
 {
-  class Color
+  class LIBMOCAP_DLLEXPORT Color
   {
   public:
-    Color ();
-
     LIBMOCAP_ACCESSOR (color, uint32_t);
 
     uint8_t red ();

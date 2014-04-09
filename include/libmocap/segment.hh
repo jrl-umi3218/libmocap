@@ -33,12 +33,13 @@
 # include <string>
 # include <vector>
 
+# include <libmocap/config.hh>
 # include <libmocap/color.hh>
 # include <libmocap/util.hh>
 
 namespace libmocap
 {
-  class Segment
+  class LIBMOCAP_DLLEXPORT Segment
   {
   public:
     struct RotationOffset

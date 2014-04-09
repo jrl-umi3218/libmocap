@@ -27,25 +27,23 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-#ifndef LIBMOCAP_MARKER_SET_FACTORY_HH
-# define LIBMOCAP_MARKER_SET_FACTORY_HH
-# include <string>
-
-# include <libmocap/config.hh>
-# include <libmocap/marker-set.hh>
+#include <libmocap/abstract-marker.hh>
+#include <libmocap/marker.hh>
 
 namespace libmocap
 {
-  class LIBMOCAP_DLLEXPORT LIBMOCAP_DLLEXPORT MarkerSetFactory
+  Marker::Marker ()
+    : AbstractMarker ()
+  {}
+
+  Marker::~Marker ()
+  {}
+
+  Marker&
+  Marker::operator= (const Marker& rhs)
   {
-  public:
-    MarkerSetFactory ();
-    ~MarkerSetFactory ();
-    MarkerSetFactory& operator= (const MarkerSetFactory& rhs);
-
-    MarkerSet load (const std::string& filename);
-  };
+    if (this == &rhs)
+      return *this;
+    return *this;
+  }
 } // end of namespace libmocap.
-
-#endif //! LIBMOCAP_MARKER_SET_HH
