@@ -28,6 +28,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <cassert>
+#include <cmath>
 
 #include <algorithm>
 #include <fstream>
@@ -395,7 +396,7 @@ namespace libmocap
 	std::vector<std::vector<std::string> >::const_iterator itLine;
 	for (itLine = values.begin (); itLine != values.end (); ++itLine)
 	  {
-	    if (itLine->size () != 8)
+	    if (itLine->size () != 7)
 	      {
 		std::ostringstream error;
 		error
@@ -409,11 +410,15 @@ namespace libmocap
 	    linkage.name () = (*itLine)[0];
 	    linkage.color ().data () = convert<uint32_t> ((*itLine)[1]);
 	    linkage.type () = Link::LINK_UNKNOWN;
-	    linkage.marker1 () = convert<int> ((*itLine)[3]);
-	    linkage.marker2 () = convert<int> ((*itLine)[4]);
-	    linkage.minLength () = convert<double> ((*itLine)[5]);
-	    linkage.maxLength () = convert<double> ((*itLine)[6]);
-	    linkage.extraStretch () = convert<double> ((*itLine)[7]);
+
+	    std::istringstream ss ((*itLine)[3]);
+	    int marker1, marker2;
+	    ss >> marker1 >> marker2;
+	    linkage.marker1 () = marker1;
+	    linkage.marker2 () = marker2;
+	    linkage.minLength () = convert<double> ((*itLine)[4]);
+	    linkage.maxLength () = convert<double> ((*itLine)[5]);
+	    linkage.extraStretch () = convert<double> ((*itLine)[6]);
 	    markerSet.links ().push_back (linkage);
 	  }
 
@@ -456,6 +461,39 @@ namespace libmocap
       {
 	std::vector<std::vector<std::string> > values =
 	  loadUnformattedData (file);
+
+	std::vector<std::vector<std::string> >::const_iterator itLine;
+	Pose pose;
+	int id;
+	for (itLine = values.begin (); itLine != values.end (); ++itLine)
+	  {
+	    id = convert<int> ((*itLine)[0]);
+	    pose.positions ().resize
+	      (std::max (static_cast<std::size_t> (id), pose.positions ().size ()));
+
+	    if (itLine->size () != 4)
+	      {
+		std::ostringstream error;
+		error
+		  << "unexpected length in linkage data"
+		  " 4 was expected but length is "
+		  << itLine->size () << ")";
+		throw std::runtime_error (error.str ());
+	      }
+
+	    if (id < 1)
+	      throw std::runtime_error ("invalid pose id");
+
+	    std::vector<double> position (3);
+
+	    position[0] = convert<double> ((*itLine)[1]);
+	    position[1] = convert<double> ((*itLine)[2]);
+	    position[2] = convert<double> ((*itLine)[3]);
+
+	    pose.positions ()[id - 1] = position;
+	  }
+	markerSet.poses ().push_back (pose);
+
 	if (!file.eof () && file.peek () != '[' && !file.eof ())
 	  loadSection (modePoseVariableMapper, markerSet, file);
       }

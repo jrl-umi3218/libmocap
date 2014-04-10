@@ -36,7 +36,12 @@ namespace libmocap
   {}
 
   MarkerSet::~MarkerSet ()
-  {}
+  {
+    std::vector<AbstractMarker*>::const_iterator it;
+    for (it = markers ().begin (); it != markers ().end (); ++it)
+      delete *it;
+    markers ().clear ();
+  }
 
   MarkerSet&
   MarkerSet::operator= (const MarkerSet& rhs)

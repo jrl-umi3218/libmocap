@@ -44,9 +44,9 @@ namespace libmocap
     ~Pose ();
     Pose& operator= (const Pose& rhs);
 
-    LIBMOCAP_ACCESSOR (positions, std::vector<double>);
+    LIBMOCAP_ACCESSOR (positions, std::vector<std::vector<double> >);
   private:
-    std::vector<double> positions_;
+    std::vector<std::vector<double> > positions_;
   };
 } // end of namespace libmocap.
 
