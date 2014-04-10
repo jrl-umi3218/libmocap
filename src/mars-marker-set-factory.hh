@@ -50,7 +50,11 @@ namespace libmocap
 
     static bool canLoad (const std::string& filename);
 
-    void loadSection (const VariableMapper*, MarkerSet& markerSet, std::ifstream& file);
+    void loadSection (const VariableMapper*, MarkerSet& markerSet,
+		      std::ifstream& file);
+    std::vector<std::vector<std::string> >
+    loadUnformattedData (std::ifstream& file);
+
 
     /// \name Section loaders
     /// \{

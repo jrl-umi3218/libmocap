@@ -28,10 +28,20 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <cassert>
+
 #include <algorithm>
 #include <fstream>
+#include <iostream>
 #include <stdexcept>
+
 #include "mars-marker-set-factory.hh"
+
+// Please note that eof is checked before and after peek as peek will
+// fail is eof is already reached but may also change the stream
+// status.
+//
+// In this case, the following reading attempt will throw an
+// exception.
 
 namespace libmocap
 {
@@ -47,12 +57,12 @@ namespace libmocap
     {"VirtualMarkers", &MarsMarkerSetFactory::loadVirtualMarkers},
     {"VMJoinDefs", &MarsMarkerSetFactory::loadVMJoinDefs},
     {"Linkages", &MarsMarkerSetFactory::loadLinkages},
-    {"SkeletonTypes", &MarsMarkerSetFactory::loadSkeletonType},
+    {"SkeletonType", &MarsMarkerSetFactory::loadSkeletonType},
     {"HtrExportOptions", &MarsMarkerSetFactory::loadHtrExportOptions},
     {"Segments", &MarsMarkerSetFactory::loadSegments},
     {"ModelPose", &MarsMarkerSetFactory::loadModelPose},
     {"Personal Info", &MarsMarkerSetFactory::loadPersonalInfo},
-    {0, 0}
+    {0, 0},
   };
 
   struct VariableMapper
@@ -73,9 +83,58 @@ namespace libmocap
   static const VariableMapper markersVariableMapper[] = {
     {"Comment", 0},
     {"NumberOf", 0},
+    {0, 0},
   };
 
+  static const VariableMapper virtualMarkersVariableMapper[] = {
+    {"Comment", 0},
+    {"NumberOf", 0},
+    {0, 0},
+  };
 
+  static const VariableMapper VMJoinDefsVariableMapper[] = {
+    {"Comment", 0},
+    {"NumberOf", 0},
+    {0, 0},
+  };
+
+  static const VariableMapper linkagesVariableMapper[] = {
+    {"Comment", 0},
+    {"NumberOf", 0},
+    {0, 0},
+  };
+
+  static const VariableMapper skeletonTypeVariableMapper[] = {
+    {"Comment", 0},
+    {"SkeletonType", 0},
+    {"RotationOrder", 0},
+    {"BoneAxis", 0},
+    {"PlaneAxis", 0},
+    {0, 0},
+  };
+
+  static const VariableMapper htrExportOptionsVariableMapper[] = {
+    {"BasePositionOption", 0},
+    {0, 0},
+  };
+
+  static const VariableMapper segmentsVariableMapper[] = {
+    {"Comment", 0},
+    {"NumberOf", 0},
+    {0, 0},
+  };
+
+  static const VariableMapper modePoseVariableMapper[] = {
+    {"NumberOf", 0},
+    {0, 0},
+  };
+
+  static const VariableMapper personalInfoVariableMapper[] = {
+    {"Name", 0},
+    {"Height", 0},
+    {"Weight", 0},
+    {0, 0},
+  };
 
   static std::string extractExtension (const std::string& filename)
   {
@@ -165,7 +224,7 @@ namespace libmocap
 
     assert (!!variableMapper);
 
-    while (!file.eof () && file.peek () != '[')
+    while (!file.eof () && file.peek () != '[' && !file.eof ())
       {
 	std::getline (file, line);
 	trimEndOfLine (line);
@@ -196,7 +255,7 @@ namespace libmocap
 	    std::string error =
 	      "unknown variable `"
 	      + variable + "'";
-	    throw std::runtime_error (error);
+	    std::cerr << "warning: " << error << std::endl;
 	  }
       }
   }
@@ -208,59 +267,138 @@ namespace libmocap
     loadSection (generalInformationVariableMapper, markerSet, file);
   }
 
+  static bool isWhiteSpace (const int c)
+  {
+    return c == ' '
+      || c == '\t'
+      || c == '\n'
+      || c == '\r';
+  }
+
+  std::vector<std::vector<std::string> >
+  MarsMarkerSetFactory::loadUnformattedData
+  (std::ifstream& file)
+  {
+    std::string line;
+    std::vector<std::vector<std::string> > values;
+    std::string::size_type idx;
+
+    // Here we make the assumption the unformatted data are at the end
+    // of each section.
+    while (!file.eof () && file.peek () != '[' && !file.eof ())
+      {
+	if (file.eof ())
+	  break;
+
+	std::getline (file, line);
+	trimEndOfLine (line);
+
+	values.push_back (std::vector<std::string> ());
+
+	idx = line.find (',');
+	while (idx != std::string::npos)
+	  {
+	    line = line.substr
+	      (idx + isWhiteSpace (line[idx + 1]) ? 2 : 1);
+	    idx = line.find (',');
+	    values[values.size () - 1].push_back (line.substr (0, idx));
+	  }
+      }
+    return values;
+  }
+
   void
   MarsMarkerSetFactory::loadMarkers
   (MarkerSet& markerSet, std::ifstream& file)
   {
-    loadSection (markersVariableMapper, markerSet, file);
+    try
+      {
+	loadSection (markersVariableMapper, markerSet, file);
+      }
+    catch (const std::runtime_error&)
+      {
+	std::vector<std::vector<std::string> > values =
+	  loadUnformattedData (file);
+	if (!file.eof () && file.peek () != '[' && !file.eof ())
+	  loadSection (markersVariableMapper, markerSet, file);
+      }
   }
 
   void
   MarsMarkerSetFactory::loadVirtualMarkers
-  (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  (MarkerSet& markerSet, std::ifstream& file)
   {
+    loadSection (virtualMarkersVariableMapper, markerSet, file);
   }
 
   void
   MarsMarkerSetFactory::loadVMJoinDefs
-  (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  (MarkerSet& markerSet, std::ifstream& file)
   {
+    loadSection (VMJoinDefsVariableMapper, markerSet, file);
   }
 
   void
   MarsMarkerSetFactory::loadLinkages
-  (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  (MarkerSet& markerSet, std::ifstream& file)
   {
+    try
+      {
+	loadSection (linkagesVariableMapper, markerSet, file);
+      }
+    catch (const std::runtime_error&)
+      {
+	std::vector<std::vector<std::string> > values =
+	  loadUnformattedData (file);
+	if (!file.eof () && file.peek () != '[' && !file.eof ())
+	  loadSection (linkagesVariableMapper, markerSet, file);
+      }
   }
 
   void
   MarsMarkerSetFactory::loadSkeletonType
-  (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  (MarkerSet& markerSet, std::ifstream& file)
   {
+    loadSection (skeletonTypeVariableMapper, markerSet, file);
   }
 
   void
   MarsMarkerSetFactory::loadHtrExportOptions
-  (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  (MarkerSet& markerSet, std::ifstream& file)
   {
+    loadSection (htrExportOptionsVariableMapper, markerSet, file);
   }
 
   void
   MarsMarkerSetFactory::loadSegments
-  (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  (MarkerSet& markerSet, std::ifstream& file)
   {
+    loadSection (segmentsVariableMapper, markerSet, file);
   }
 
   void
   MarsMarkerSetFactory::loadModelPose
-  (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  (MarkerSet& markerSet, std::ifstream& file)
   {
+    try
+      {
+	loadSection (modePoseVariableMapper, markerSet, file);
+      }
+    catch (const std::runtime_error&)
+      {
+	std::vector<std::vector<std::string> > values =
+	  loadUnformattedData (file);
+	if (!file.eof () && file.peek () != '[' && !file.eof ())
+	  loadSection (modePoseVariableMapper, markerSet, file);
+      }
+
   }
 
   void
   MarsMarkerSetFactory::loadPersonalInfo
-  (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  (MarkerSet& markerSet, std::ifstream& file)
   {
+    loadSection (personalInfoVariableMapper, markerSet, file);
   }
 
 
@@ -271,7 +409,7 @@ namespace libmocap
     if (value != "5")
       throw std::runtime_error
 	("Mars file loader only support version 5,"
-	 " but file format version is |" + value +"|");
+	 " but file format version is " + value);
   }
 
   void
