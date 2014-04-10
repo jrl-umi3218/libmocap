@@ -31,8 +31,12 @@
 
 #include <algorithm>
 #include <fstream>
+#include <sstream>
 #include <iostream>
 #include <stdexcept>
+
+#include <libmocap/link.hh>
+#include <libmocap/marker.hh>
 
 #include "mars-marker-set-factory.hh"
 
@@ -148,6 +152,15 @@ namespace libmocap
   static void trimEndOfLine (std::string& s)
   {
     s.erase (s.find_last_not_of ("\n\r") + 1);
+  }
+
+  template <typename T>
+  static T convert (const std::string& s)
+  {
+    T res;
+    std::istringstream ss (s);
+    ss >> res;
+    return res;
   }
 
   MarsMarkerSetFactory::MarsMarkerSetFactory ()
@@ -267,14 +280,6 @@ namespace libmocap
     loadSection (generalInformationVariableMapper, markerSet, file);
   }
 
-  static bool isWhiteSpace (const int c)
-  {
-    return c == ' '
-      || c == '\t'
-      || c == '\n'
-      || c == '\r';
-  }
-
   std::vector<std::vector<std::string> >
   MarsMarkerSetFactory::loadUnformattedData
   (std::ifstream& file)
@@ -298,11 +303,13 @@ namespace libmocap
 	idx = line.find (',');
 	while (idx != std::string::npos)
 	  {
-	    line = line.substr
-	      (idx + isWhiteSpace (line[idx + 1]) ? 2 : 1);
-	    idx = line.find (',');
 	    values[values.size () - 1].push_back (line.substr (0, idx));
+	    line = line.substr (idx + 1);
+	    idx = line.find (',');
 	  }
+
+	if (!line.empty ())
+	  values[values.size () - 1].push_back (line);
       }
     return values;
   }
@@ -319,6 +326,40 @@ namespace libmocap
       {
 	std::vector<std::vector<std::string> > values =
 	  loadUnformattedData (file);
+
+	std::vector<std::vector<std::string> >::const_iterator itLine;
+	for (itLine = values.begin (); itLine != values.end (); ++itLine)
+	  {
+	    if (itLine->size () != 6)
+	      {
+		std::ostringstream error;
+		error
+		  << "unexpected length in marker data"
+		  " (6 was expected but length is "
+		  << itLine->size () << ")";
+		throw std::runtime_error (error.str ());
+	      }
+
+
+	    Marker* marker = new Marker ();
+	    try
+	      {
+		marker->id () = convert<int> ((*itLine)[0]);
+		marker->name () = (*itLine)[1];
+		marker->color ().data () = convert<uint32_t> ((*itLine)[2]);
+		marker->physicalColor ().data () =
+		  convert<uint32_t> ((*itLine)[3]);
+		marker->size () = convert<double> ((*itLine)[4]);
+		marker->optional () = convert<int> ((*itLine)[5]);;
+		markerSet.markers ().push_back (marker);
+	      }
+	    catch (...)
+	      {
+		delete marker;
+		throw;
+	      }
+	  }
+
 	if (!file.eof () && file.peek () != '[' && !file.eof ())
 	  loadSection (markersVariableMapper, markerSet, file);
       }
@@ -350,6 +391,33 @@ namespace libmocap
       {
 	std::vector<std::vector<std::string> > values =
 	  loadUnformattedData (file);
+
+	std::vector<std::vector<std::string> >::const_iterator itLine;
+	for (itLine = values.begin (); itLine != values.end (); ++itLine)
+	  {
+	    if (itLine->size () != 8)
+	      {
+		std::ostringstream error;
+		error
+		  << "unexpected length in linkage data"
+		  " 8 was expected but length is "
+		  << itLine->size () << ")";
+		throw std::runtime_error (error.str ());
+	      }
+
+	    Link linkage;
+	    linkage.name () = (*itLine)[0];
+	    linkage.color ().data () = convert<uint32_t> ((*itLine)[1]);
+	    linkage.type () = Link::LINK_UNKNOWN;
+	    linkage.marker1 () = convert<int> ((*itLine)[3]);
+	    linkage.marker2 () = convert<int> ((*itLine)[4]);
+	    linkage.minLength () = convert<double> ((*itLine)[5]);
+	    linkage.maxLength () = convert<double> ((*itLine)[6]);
+	    linkage.extraStretch () = convert<double> ((*itLine)[7]);
+	    markerSet.links ().push_back (linkage);
+	  }
+
+
 	if (!file.eof () && file.peek () != '[' && !file.eof ())
 	  loadSection (linkagesVariableMapper, markerSet, file);
       }

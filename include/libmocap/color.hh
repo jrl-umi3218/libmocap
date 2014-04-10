@@ -40,14 +40,14 @@ namespace libmocap
   class LIBMOCAP_DLLEXPORT Color
   {
   public:
-    LIBMOCAP_ACCESSOR (color, uint32_t);
+    LIBMOCAP_ACCESSOR (data, uint32_t);
 
     uint8_t red ();
     uint8_t green ();
     uint8_t blue ();
     uint8_t alpha ();
   private:
-    uint32_t color_;
+    uint32_t data_;
   };
 } // end of namespace libmocap.
 

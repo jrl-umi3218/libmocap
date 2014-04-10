@@ -16,5 +16,6 @@ int main ()
       std::cerr << e.what () << std::endl;
       return 1;
     }
+  std::cout << "file loaded with success!" << std::endl;
   return 0;
 }
