@@ -27,6 +27,7 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#include <cassert>
 #include <algorithm>
 #include <fstream>
 #include <stdexcept>
@@ -54,6 +55,28 @@ namespace libmocap
     {0, 0}
   };
 
+  struct VariableMapper
+  {
+    const char* variable;
+    void (MarsMarkerSetFactory::*loader) (MarkerSet&, const std::string&);
+  };
+
+  static const VariableMapper generalInformationVariableMapper[] = {
+    {"Version",  &MarsMarkerSetFactory::loadVersion},
+    {"ProjectName",  &MarsMarkerSetFactory::loadProjectName},
+    {"ProjectComments1",  0},
+    {"ProjectComments2",  0},
+    {"ProjectComments3",  0},
+    {0, 0},
+  };
+
+  static const VariableMapper markersVariableMapper[] = {
+    {"Comment", 0},
+    {"NumberOf", 0},
+  };
+
+
+
   static std::string extractExtension (const std::string& filename)
   {
     std::string::size_type idx = filename.rfind ('.');
@@ -63,6 +86,10 @@ namespace libmocap
       return filename;
   }
 
+  static void trimEndOfLine (std::string& s)
+  {
+    s.erase (s.find_last_not_of ("\n\r") + 1);
+  }
 
   MarsMarkerSetFactory::MarsMarkerSetFactory ()
   {}
@@ -90,6 +117,8 @@ namespace libmocap
     while (!file.eof ())
       {
 	std::getline (file, line);
+	trimEndOfLine (line);
+
 	if (line[0] != '[')
 	  {
 	    std::string error = "failed to load `"
@@ -98,14 +127,15 @@ namespace libmocap
 	      + line[0] + "' was found)";
 	    throw std::runtime_error (error);
 	  }
-	line = line.substr (1, line.size () - 3);
+	line = line.substr (1, line.size () - 2);
 
 	const SectionMapper* mapper = sectionMapper;
 	while (mapper && mapper->section != 0)
 	  {
 	    if (line == mapper->section)
 	      {
-		(this->*(mapper->loader)) (result, file);
+		if (mapper->loader)
+		  (this->*(mapper->loader)) (result, file);
 		break;
 	      }
 	    ++mapper;
@@ -124,79 +154,142 @@ namespace libmocap
   }
 
   void
-  MarsMarkerSetFactory::loadGeneralInformation (MarkerSet& /*markerSet*/, std::ifstream& file)
+  MarsMarkerSetFactory::loadSection
+  (const VariableMapper* variableMapper, MarkerSet& markerSet,
+   std::ifstream& file)
   {
     std::string line;
     std::string variable;
     std::string value;
     std::string::size_type idx;
 
+    assert (!!variableMapper);
+
     while (!file.eof () && file.peek () != '[')
       {
 	std::getline (file, line);
+	trimEndOfLine (line);
 
 	idx = line.find ('=');
 	if (idx == std::string::npos)
-	  throw std::runtime_error ("invalid syntax while parsing file");
+	  throw std::runtime_error
+	    ("invalid syntax while parsing file on line ("
+	     + line.substr(0, line.size () - 1)
+	     + ")");
 
 	variable = line.substr (0, idx);
 	value = line.substr (idx + 1);
 
-	//FIXME: find an elegant way to map variables to action
+	const VariableMapper* mapper = variableMapper;
+	while (mapper && mapper->variable != 0)
+	  {
+	    if (variable == mapper->variable)
+	      {
+		if (mapper->loader)
+		  (this->*(mapper->loader)) (markerSet, value);
+		break;
+	      }
+	    ++mapper;
+	  }
+	if (mapper && mapper->variable == 0)
+	  {
+	    std::string error =
+	      "unknown variable `"
+	      + variable + "'";
+	    throw std::runtime_error (error);
+	  }
       }
   }
 
   void
-  MarsMarkerSetFactory::loadMarkers (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  MarsMarkerSetFactory::loadGeneralInformation
+  (MarkerSet& markerSet, std::ifstream& file)
+  {
+    loadSection (generalInformationVariableMapper, markerSet, file);
+  }
+
+  void
+  MarsMarkerSetFactory::loadMarkers
+  (MarkerSet& markerSet, std::ifstream& file)
+  {
+    loadSection (markersVariableMapper, markerSet, file);
+  }
+
+  void
+  MarsMarkerSetFactory::loadVirtualMarkers
+  (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
   {
   }
 
   void
-  MarsMarkerSetFactory::loadVirtualMarkers (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  MarsMarkerSetFactory::loadVMJoinDefs
+  (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
   {
   }
 
   void
-  MarsMarkerSetFactory::loadVMJoinDefs (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  MarsMarkerSetFactory::loadLinkages
+  (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
   {
   }
 
   void
-  MarsMarkerSetFactory::loadLinkages (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  MarsMarkerSetFactory::loadSkeletonType
+  (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
   {
   }
 
   void
-  MarsMarkerSetFactory::loadSkeletonType (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  MarsMarkerSetFactory::loadHtrExportOptions
+  (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
   {
   }
 
   void
-  MarsMarkerSetFactory::loadHtrExportOptions (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  MarsMarkerSetFactory::loadSegments
+  (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
   {
   }
 
   void
-  MarsMarkerSetFactory::loadSegments (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  MarsMarkerSetFactory::loadModelPose
+  (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
   {
   }
 
   void
-  MarsMarkerSetFactory::loadModelPose (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  MarsMarkerSetFactory::loadPersonalInfo
+  (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
   {
   }
 
+
   void
-  MarsMarkerSetFactory::loadPersonalInfo (MarkerSet& /*markerSet*/, std::ifstream& /*file*/)
+  MarsMarkerSetFactory::loadVersion
+  (MarkerSet& /*markerSet*/, const std::string& value)
   {
+    if (value != "5")
+      throw std::runtime_error
+	("Mars file loader only support version 5,"
+	 " but file format version is |" + value +"|");
   }
+
+  void
+  MarsMarkerSetFactory::loadProjectName
+  (MarkerSet& markerSet, const std::string& value)
+  {
+    markerSet.name () = value;
+  }
+
 
 
   bool
   MarsMarkerSetFactory::canLoad (const std::string& filename)
   {
     std::string extension = extractExtension (filename);
-    std::transform (extension.begin (), extension.end(), extension.begin(), ::tolower);
+    std::transform (extension.begin (),
+		    extension.end(),
+		    extension.begin(), ::tolower);
     return extension == "mars";
   }
 } // end of namespace libmocap.

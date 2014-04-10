@@ -37,6 +37,8 @@
 
 namespace libmocap
 {
+  class VariableMapper;
+
   class MarsMarkerSetFactory
   {
   public:
@@ -48,6 +50,11 @@ namespace libmocap
 
     static bool canLoad (const std::string& filename);
 
+    void loadSection (const VariableMapper*, MarkerSet& markerSet, std::ifstream& file);
+
+    /// \name Section loaders
+    /// \{
+
     void loadGeneralInformation (MarkerSet& markerSet, std::ifstream& file);
     void loadMarkers (MarkerSet& markerSet, std::ifstream& file);
     void loadVirtualMarkers (MarkerSet& markerSet, std::ifstream& file);
@@ -58,6 +65,16 @@ namespace libmocap
     void loadSegments (MarkerSet& markerSet, std::ifstream& file);
     void loadModelPose (MarkerSet& markerSet, std::ifstream& file);
     void loadPersonalInfo (MarkerSet& markerSet, std::ifstream& file);
+
+    /// \}
+
+    /// \name General Information variables loaders
+    /// \{
+
+    void loadVersion (MarkerSet& markerSet, const std::string& value);
+    void loadProjectName (MarkerSet& markerSet, const std::string& value);
+
+    // /\}
 
   };
 } // end of namespace libmocap.
