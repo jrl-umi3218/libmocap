@@ -46,4 +46,18 @@ namespace libmocap
       return *this;
     return *this;
   }
+
+  std::ostream&
+  Marker::print (std::ostream& stream) const
+  {
+    AbstractMarker::print (stream);
+    return stream;
+  }
+
+  std::ostream&
+  operator<< (std::ostream& o, const Marker& marker)
+  {
+    return marker.print (o);
+  }
+
 } // end of namespace libmocap.

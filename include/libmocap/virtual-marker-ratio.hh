@@ -30,6 +30,7 @@
 
 #ifndef LIBMOCAP_VIRTUAL_MARKER_RATIO_HH
 # define LIBMOCAP_VIRTUAL_MARKER_RATIO_HH
+# include <iosfwd>
 # include <vector>
 # include <libmocap/config.hh>
 # include <libmocap/abstract-virtual-marker.hh>
@@ -45,9 +46,15 @@ namespace libmocap
     VirtualMarkerRatio& operator= (const VirtualMarkerRatio& rhs);
 
     LIBMOCAP_ACCESSOR (weights, std::vector<double>);
+
+    std::ostream& print (std::ostream& o) const;
   private:
     std::vector<double> weights_;
   };
+
+  LIBMOCAP_DLLEXPORT std::ostream&
+  operator<< (std::ostream& o, const VirtualMarkerRatio& virtualMarker);
+
 } // end of namespace libmocap.
 
 #endif //! LIBMOCAP_VIRTUAL_MARKER_RATIO_HH

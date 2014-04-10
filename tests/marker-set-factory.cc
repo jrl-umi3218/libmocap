@@ -9,7 +9,8 @@ int main ()
   std::string file = LIBMOCAP_DATA_PATH "human.mars";
   try
     {
-  libmocap::MarkerSet markerSet = factory.load (file);
+      libmocap::MarkerSet markerSet = factory.load (file);
+      std::cout << markerSet << std::endl;
     }
   catch (const std::exception& e)
     {

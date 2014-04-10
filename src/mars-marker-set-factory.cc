@@ -235,20 +235,27 @@ namespace libmocap
     std::string variable;
     std::string value;
     std::string::size_type idx;
+    std::streamoff filepos;
 
     assert (!!variableMapper);
 
     while (!file.eof () && file.peek () != '[' && !file.eof ())
       {
+	filepos = file.tellg ();
 	std::getline (file, line);
 	trimEndOfLine (line);
 
 	idx = line.find ('=');
 	if (idx == std::string::npos)
-	  throw std::runtime_error
-	    ("invalid syntax while parsing file on line ("
-	     + line.substr(0, line.size () - 1)
-	     + ")");
+	  {
+	    // restore file position
+	    file.seekg (filepos ,std::ios_base::beg);
+
+	    throw std::runtime_error
+	      ("invalid syntax while parsing file on line ("
+	       + line.substr(0, line.size () - 1)
+	       + ")");
+	  }
 
 	variable = line.substr (0, idx);
 	value = line.substr (idx + 1);

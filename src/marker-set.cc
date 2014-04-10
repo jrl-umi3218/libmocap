@@ -27,11 +27,18 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
+#include <algorithm>
+#include <iterator>
 #include <libmocap/marker-set.hh>
 
 namespace libmocap
 {
+  template <typename T>
+  static T& dereference(T* ptr)
+  {
+    return *ptr;
+  }
+
   MarkerSet::MarkerSet ()
   {}
 
@@ -50,5 +57,48 @@ namespace libmocap
       return *this;
     return *this;
   }
+
+  std::ostream&
+  MarkerSet::print (std::ostream& stream) const
+  {
+    stream
+      << "name: " << name () << "\n"
+      << "markers:\n";
+    if (markers ().empty ())
+      stream << "(no marker)\n";
+    std::transform(markers ().begin (),
+		   markers ().end (),
+		   std::ostream_iterator<AbstractMarker>(stream, "\n"),
+		   dereference<AbstractMarker>);
+    stream << '\n' << "links:\n";
+    if (links ().empty ())
+      stream << "(no link)\n";
+    std::copy
+      (links ().begin (), links ().end (),
+       std::ostream_iterator<Link>(stream, "\n"));
+    stream
+      << '\n' << "segments:\n";
+    if (segments ().empty ())
+      stream << "(no segment)\n";
+    std::copy
+      (segments ().begin (), segments ().end (),
+       std::ostream_iterator<Segment>(stream, "\n"));
+    stream
+      << '\n' << "poses:\n";
+    if (poses ().empty ())
+      stream << "(no pose)\n";
+    std::copy
+      (poses ().begin (), poses ().end (),
+       std::ostream_iterator<Pose>(stream, "\n"));
+    stream << '\n';
+    return stream;
+  }
+
+  std::ostream&
+  operator<< (std::ostream& o, const MarkerSet& markerSet)
+  {
+    return markerSet.print (o);
+  }
+
 
 } // end of namespace libmocap.

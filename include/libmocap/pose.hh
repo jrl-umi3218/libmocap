@@ -30,6 +30,7 @@
 
 #ifndef LIBMOCAP_POSE_HH
 # define LIBMOCAP_POSE_HH
+# include <iosfwd>
 # include <vector>
 
 # include <libmocap/config.hh>
@@ -45,9 +46,14 @@ namespace libmocap
     Pose& operator= (const Pose& rhs);
 
     LIBMOCAP_ACCESSOR (positions, std::vector<std::vector<double> >);
+
+    std::ostream& print (std::ostream& o) const;
   private:
     std::vector<std::vector<double> > positions_;
   };
+
+  LIBMOCAP_DLLEXPORT std::ostream&
+  operator<< (std::ostream& o, const Pose& link);
 } // end of namespace libmocap.
 
 #endif //! LIBMOCAP_POSE_HH

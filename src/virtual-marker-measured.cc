@@ -47,4 +47,17 @@ namespace libmocap
     return *this;
   }
 
+  std::ostream&
+  VirtualMarkerMeasured::print (std::ostream& stream) const
+  {
+    AbstractVirtualMarker::print (stream);
+    return stream;
+  }
+
+  std::ostream&
+  operator<< (std::ostream& o, const VirtualMarkerMeasured& markerSet)
+  {
+    return markerSet.print (o);
+  }
+
 } // end of namespace libmocap.

@@ -30,6 +30,7 @@
 
 #ifndef LIBMOCAP_ABSTRACT_MARKER_HH
 # define LIBMOCAP_ABSTRACT_MARKER_HH
+# include <iosfwd>
 # include <string>
 
 # include <libmocap/config.hh>
@@ -51,6 +52,8 @@ namespace libmocap
     LIBMOCAP_ACCESSOR (physicalColor, Color);
     LIBMOCAP_ACCESSOR (size, double);
     LIBMOCAP_ACCESSOR (optional, bool);
+
+    virtual std::ostream& print (std::ostream& o) const;
   private:
     int id_;
     std::string name_;
@@ -59,6 +62,10 @@ namespace libmocap
     double size_;
     bool optional_;
   };
+
+  LIBMOCAP_DLLEXPORT std::ostream&
+  operator<< (std::ostream& o, const AbstractMarker& markerSet);
+
 } // end of namespace libmocap.
 
 #endif //! LIBMOCAP_ABSTRACT_MARKER_HH

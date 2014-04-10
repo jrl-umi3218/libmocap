@@ -27,6 +27,7 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#include <iostream>
 #include <libmocap/link.hh>
 
 namespace libmocap
@@ -43,4 +44,27 @@ namespace libmocap
       return *this;
     return *this;
   }
+
+  std::ostream&
+  Link::print (std::ostream& stream) const
+  {
+    stream
+      << "link:\n"
+      << "name: " << name () << '\n'
+      << "color: " << color () << '\n'
+      << "type: " << type () << '\n'
+      << "marker 1: " << marker1 () << '\n'
+      << "marker 2: " << marker2 () << '\n'
+      << "min length: " << minLength () << '\n'
+      << "max length: " << maxLength () << '\n'
+      << "extra stretch: " << extraStretch ();
+    return stream;
+  }
+
+  std::ostream&
+  operator<< (std::ostream& o, const Link& markerSet)
+  {
+    return markerSet.print (o);
+  }
+
 } // end of namespace libmocap.

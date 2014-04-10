@@ -30,6 +30,7 @@
 
 #ifndef LIBMOCAP_VIRTUAL_MARKER_MEASURED_HH
 # define LIBMOCAP_VIRTUAL_MARKER_MEASURED_HH
+# include <iosfwd>
 # include <vector>
 
 # include <libmocap/config.hh>
@@ -46,9 +47,15 @@ namespace libmocap
     VirtualMarkerMeasured& operator= (const VirtualMarkerMeasured& rhs);
 
     LIBMOCAP_ACCESSOR (offset, std::vector<double>);
+
+    std::ostream& print (std::ostream& o) const;
   private:
     std::vector<double> offset_;
   };
+
+  LIBMOCAP_DLLEXPORT std::ostream&
+  operator<< (std::ostream& o, const VirtualMarkerMeasured& virtualMarker);
+
 } // end of namespace libmocap.
 
 #endif //! LIBMOCAP_VIRTUAL_MARKER_MEASURED_HH

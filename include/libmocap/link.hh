@@ -30,6 +30,7 @@
 
 #ifndef LIBMOCAP_LINK_HH
 # define LIBMOCAP_LINK_HH
+# include <iosfwd>
 # include <string>
 
 # include <libmocap/config.hh>
@@ -58,6 +59,8 @@ namespace libmocap
     LIBMOCAP_ACCESSOR (minLength, double);
     LIBMOCAP_ACCESSOR (maxLength, double);
     LIBMOCAP_ACCESSOR (extraStretch, double);
+
+    std::ostream& print (std::ostream& o) const;
   private:
     std::string name_;
     Color color_;
@@ -68,6 +71,10 @@ namespace libmocap
     double maxLength_;
     double extraStretch_;
   };
+
+  LIBMOCAP_DLLEXPORT std::ostream&
+  operator<< (std::ostream& o, const Link& link);
+
 } // end of namespace libmocap.
 
 #endif //! LIBMOCAP_LINK_HH

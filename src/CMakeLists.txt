@@ -2,6 +2,7 @@ ADD_LIBRARY(
   mocap SHARED
   abstract-marker.cc
   abstract-virtual-marker.cc
+  color.cc
   link.cc
   mars-marker-set-factory.cc
   marker-set-factory.cc

@@ -30,6 +30,7 @@
 
 #ifndef LIBMOCAP_SEGMENT_HH
 # define LIBMOCAP_SEGMENT_HH
+# include <iosfwd>
 # include <string>
 # include <vector>
 
@@ -85,6 +86,8 @@ namespace libmocap
     LIBMOCAP_ACCESSOR (longAxisMarker, int);
     LIBMOCAP_ACCESSOR (planeAxisMarker, int);
     LIBMOCAP_ACCESSOR (rotationOffset, RotationOffset);
+
+    std::ostream& print (std::ostream& o) const;
   private:
     int id_;
     std::string name_;
@@ -94,6 +97,10 @@ namespace libmocap
     int planeAxisMarker_;
     RotationOffset rotationOffset_;
   };
+
+  LIBMOCAP_DLLEXPORT std::ostream&
+  operator<< (std::ostream& o, const Segment& segment);
+
 } // end of namespace libmocap.
 
 #endif //! LIBMOCAP_SEGMENT_HH

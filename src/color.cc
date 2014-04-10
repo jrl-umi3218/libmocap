@@ -28,47 +28,21 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <iostream>
-#include <libmocap/segment.hh>
+#include <libmocap/color.hh>
 
 namespace libmocap
 {
-  Segment::Segment ()
-  {}
-
-  Segment::~Segment ()
-  {}
-
-  Segment&
-  Segment::operator= (const Segment& rhs)
-  {
-    if (this == &rhs)
-      return *this;
-    return *this;
-  }
-
   std::ostream&
-  Segment::print (std::ostream& stream) const
+  Color::print (std::ostream& stream) const
   {
-    stream
-      << "segment:\n"
-      << "id: " << id () << '\n'
-      << "name: " << name () << '\n'
-      << "name: " << name () << '\n'
-      << "number of children: " << children ().size () << '\n'
-      << "origin marker: " << originMarker () << '\n'
-      << "long axis marker: " << longAxisMarker () << '\n'
-      << "plane axis marker: " << planeAxisMarker () << '\n'
-      << "rotation offset: "
-      << rotationOffset ().roll () << " / "
-      << rotationOffset ().pitch () << " / "
-      << rotationOffset ().yaw ();
+    stream << data ();
     return stream;
   }
 
   std::ostream&
-  operator<< (std::ostream& o, const Segment& markerSet)
+  operator<< (std::ostream& o, const Color& color)
   {
-    return markerSet.print (o);
+    return color.print (o);
   }
 
 } // end of namespace libmocap.

@@ -27,6 +27,7 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#include <iostream>
 #include <libmocap/pose.hh>
 
 namespace libmocap
@@ -43,4 +44,35 @@ namespace libmocap
       return *this;
     return *this;
   }
+
+  std::ostream&
+  Pose::print (std::ostream& stream) const
+  {
+    stream
+      << "pose:\n";
+    std::vector<std::vector<double> >::const_iterator it;
+    for (it = positions ().begin (); it != positions ().end (); ++it)
+      {
+	if (it->size () != 3)
+	  {
+	    stream << "(skipping ill-formed marker position)\n";
+	    continue;
+	  }
+	stream
+	  << it - positions ().begin ()
+	  << " x: " << (*it)[0]
+	  << ", y: " << (*it)[1]
+	  << ", z: " << (*it)[2]
+	  << '\n';
+      }
+
+    return stream;
+  }
+
+  std::ostream&
+  operator<< (std::ostream& o, const Pose& markerSet)
+  {
+    return markerSet.print (o);
+  }
+
 } // end of namespace libmocap.

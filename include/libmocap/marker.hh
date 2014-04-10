@@ -30,6 +30,7 @@
 
 #ifndef LIBMOCAP_MARKER_HH
 # define LIBMOCAP_MARKER_HH
+# include <iosfwd>
 # include <libmocap/config.hh>
 # include <libmocap/abstract-marker.hh>
 
@@ -41,8 +42,14 @@ namespace libmocap
     Marker ();
     ~Marker ();
     Marker& operator= (const Marker& rhs);
+
+    std::ostream& print (std::ostream& o) const;
   private:
   };
+
+  LIBMOCAP_DLLEXPORT std::ostream&
+  operator<< (std::ostream& o, const Marker& marker);
+
 } // end of namespace libmocap.
 
 #endif //! LIBMOCAP_MARKER_HH

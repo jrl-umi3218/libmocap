@@ -30,6 +30,7 @@
 
 #ifndef LIBMOCAP_COLOR_HH
 # define LIBMOCAP_COLOR_HH
+# include <iosfwd>
 # include <stdint.h>
 
 # include <libmocap/config.hh>
@@ -46,9 +47,15 @@ namespace libmocap
     uint8_t green ();
     uint8_t blue ();
     uint8_t alpha ();
+
+    std::ostream& print (std::ostream& o) const;
   private:
     uint32_t data_;
   };
+
+  LIBMOCAP_DLLEXPORT std::ostream&
+  operator<< (std::ostream& o, const Color& color);
+
 } // end of namespace libmocap.
 
 #endif //! LIBMOCAP_COLOR_HH

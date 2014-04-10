@@ -30,13 +30,15 @@
 
 #ifndef LIBMOCAP_ABSTRACT_VIRTUAL_MARKER_HH
 # define LIBMOCAP_ABSTRACT_VIRTUAL_MARKER_HH
+# include <iosfwd>
+
 # include <libmocap/config.hh>
 # include <libmocap/abstract-marker.hh>
 # include <libmocap/util.hh>
 
 namespace libmocap
 {
-  class LIBMOCAP_DLLEXPORT AbstractVirtualMarker
+  class LIBMOCAP_DLLEXPORT AbstractVirtualMarker : public AbstractMarker
   {
   public:
     AbstractVirtualMarker ();
@@ -46,11 +48,17 @@ namespace libmocap
     LIBMOCAP_ACCESSOR (originMarker, int);
     LIBMOCAP_ACCESSOR (longAxisMarker, int);
     LIBMOCAP_ACCESSOR (planeAxisMarker, int);
+
+    virtual std::ostream& print (std::ostream& o) const;
   private:
     int originMarker_;
     int longAxisMarker_;
     int planeAxisMarker_;
   };
+
+  LIBMOCAP_DLLEXPORT std::ostream&
+  operator<< (std::ostream& o, const AbstractVirtualMarker& virtualMarker);
+
 } // end of namespace libmocap.
 
 #endif //! LIBMOCAP_ABSTRACT_VIRTUAL_MARKER_HH

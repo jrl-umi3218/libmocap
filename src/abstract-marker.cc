@@ -27,6 +27,7 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#include <iostream>
 #include <libmocap/abstract-marker.hh>
 
 namespace libmocap
@@ -44,4 +45,26 @@ namespace libmocap
       return *this;
     return *this;
   }
+
+  std::ostream&
+  AbstractMarker::print (std::ostream& stream) const
+  {
+    stream
+      << "abstract marker:\n"
+      << "id: " << id () << '\n'
+      << "name: " << name () << '\n'
+      << "color: " << color () << '\n'
+      << "physical color: " << physicalColor () << '\n'
+      << "size: " << size () << '\n'
+      << "optional: " << (optional () ? "yes" : "no");
+
+    return stream;
+  }
+
+  std::ostream&
+  operator<< (std::ostream& o, const AbstractMarker& markerSet)
+  {
+    return markerSet.print (o);
+  }
+
 } // end of namespace libmocap.

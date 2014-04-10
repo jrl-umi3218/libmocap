@@ -30,6 +30,7 @@
 
 #ifndef LIBMOCAP_MARKER_SET_HH
 # define LIBMOCAP_MARKER_SET_HH
+# include <iosfwd>
 # include <string>
 # include <vector>
 
@@ -89,6 +90,8 @@ namespace libmocap
     LIBMOCAP_ACCESSOR (links, std::vector<Link>);
     LIBMOCAP_ACCESSOR (segments, std::vector<Segment>);
     LIBMOCAP_ACCESSOR (poses, std::vector<Pose>);
+
+    std::ostream& print (std::ostream& o) const;
   private:
     std::string name_;
     std::vector<AbstractMarker*> markers_;
@@ -96,6 +99,10 @@ namespace libmocap
     std::vector<Segment> segments_;
     std::vector<Pose> poses_;
   };
+
+  LIBMOCAP_DLLEXPORT std::ostream&
+  operator<< (std::ostream& o, const MarkerSet& markerSet);
+
 } // end of namespace libmocap.
 
 #endif //! LIBMOCAP_MARKER_SET_HH
