@@ -6,11 +6,15 @@
 int main ()
 {
   libmocap::MarkerSetFactory factory;
-  std::string file = LIBMOCAP_DATA_PATH "human.mars";
+
+  std::string humanMars = LIBMOCAP_DATA_PATH "human.mars";
+  std::string boxMars = LIBMOCAP_DATA_PATH "box.mars";
   try
     {
-      libmocap::MarkerSet markerSet = factory.load (file);
-      std::cout << markerSet << std::endl;
+      libmocap::MarkerSet humanMarkerSet = factory.load (humanMars);
+      std::cout << humanMarkerSet << std::endl;
+      libmocap::MarkerSet boxMarkerSet = factory.load (boxMars);
+      std::cout << boxMarkerSet << std::endl;
     }
   catch (const std::exception& e)
     {

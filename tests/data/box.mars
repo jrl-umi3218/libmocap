@@ -1,0 +1,49 @@
+[General Information]
+Version=5
+ProjectName=box
+ProjectComments1=
+ProjectComments2=
+ProjectComments3=Written out by Cortex 2.6.8.1186. Please do not hand edit this file.
+[Markers]
+Comment= Marker#, Name, Color, PhysicalColor, Size, Optional
+NumberOf=4
+1, box1, 0, 0, 0.000000, 0
+2, box2, 1, 0, 0.000000, 0
+3, box3, 2, 0, 0.000000, 0
+4, box4, 3, 0, 0.000000, 0
+[VirtualMarkers]
+Comment= Marker#, Name, CalculationType, OriginMarker#, LongAxisMarker#, Segment#
+Comment= PlaneAxisMarker#, XPositionOffset, YPositionOffset, ZPositionOffset
+Comment= Calculation Types : 2 = 2 pt. ratio, 3 = 2 pt. measured value
+Comment= Calculation Types : 4 = 3 pt. ratio, 5 = 3 pt. measured value
+Comment= Calculation Types : 6 = EMR marker, 7 = 1 pt. measured value
+, 8 = Relative to Bone
+NumberOf=0
+[VMJoinDefs]
+Comment= Marker#, CalculationType, OriginMarker#, LongAxisMarker#, PlaneAxisMarker#
+NumberOf=0
+[Linkages]
+Comment= Name, LinkColor, LinkType, Marker1# Marker2#, MinLength, MaxLength, ExtraStretch
+NumberOf=5
+Link, 4, 0, 2 1, 197.156601, 197.726456, 0.150000
+Link, 4, 0, 3 1, 212.044647, 213.739395, 0.150000
+Link, 4, 0, 3 2, 290.084930, 291.792847, 0.150000
+Link, 4, 0, 4 1, 57.482857, 57.921959, 0.150000
+Link, 4, 0, 4 3, 220.565948, 222.475586, 0.150000
+[SkeletonType]
+Comment= Type: 0=None, 1=SkeletonBuilder, 2=Embedded Calcium Model, 3=Assoc. JNT file
+SkeletonType=0
+RotationOrder=ZYX
+BoneAxis=Y
+PlaneAxis=X
+[HtrExportOptions]
+BasePositionOption=1
+[Segments]
+Comment= Segment#, Name, Parent, OriginMarker#, LongAxisMarker#
+Comment= PlaneAxisMarker#, XRotationOffset, YRotationOffset, ZRotationOffset
+Comment= Segment 0 represents the Root segment
+NumberOf=0
+[Personal Info]
+Name=Default Name
+Height=0.000000
+Weight=0.000000
