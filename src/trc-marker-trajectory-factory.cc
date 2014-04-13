@@ -186,9 +186,14 @@ namespace libmocap
 	  {
 	    std::getline (file, line);
 	  }
-	catch (...)
+	catch (const std::ifstream::failure& e)
 	  {
-	    return;
+	    // if eof is reached here, return, if this is another
+	    // error, re-throw.
+	    if (file.eof ())
+	      return;
+	    else
+	      throw;
 	  }
 	trimEndOfLine (line);
 
