@@ -1,0 +1,9 @@
+*-1.mps
+*.1
+*.aux.make
+*.auxbbl.make
+*.auxbbl.make.temp
+*.auxtarget.make
+*.d
+*.fls
+*.pdf
