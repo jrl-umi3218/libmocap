@@ -7,9 +7,13 @@ ADD_LIBRARY(
   mars-marker-set-factory.cc
   marker-set-factory.cc
   marker-set.cc
+  marker-trajectory.cc
+  marker-trajectory-factory.cc
+  trc-marker-trajectory-factory.cc
   marker.cc
   pose.cc
   segment.cc
+  string.cc
   virtual-marker-measured.cc
   virtual-marker-ratio.cc
   virtual-marker-relative-to-bone.cc

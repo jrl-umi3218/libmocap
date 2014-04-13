@@ -33,7 +33,8 @@
 namespace libmocap
 {
   VirtualMarkerMeasured::VirtualMarkerMeasured ()
-    : AbstractVirtualMarker ()
+    : AbstractVirtualMarker (),
+      offset_ ()
   {}
 
   VirtualMarkerMeasured::~VirtualMarkerMeasured ()

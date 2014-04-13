@@ -28,51 +28,70 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <iostream>
-#include <libmocap/link.hh>
+#include <iterator>
+#include <libmocap/marker-trajectory.hh>
 
 namespace libmocap
 {
-  Link::Link ()
-    : name_ (),
-      color_ (),
-      type_ (),
-      marker1_ (),
-      marker2_ (),
-      minLength_ (),
-      maxLength_ (),
-      extraStretch_ ()
-  {}
-
-  Link::~Link ()
-  {}
-
-  Link& Link::operator= (const Link& rhs)
+  MarkerTrajectory::MarkerTrajectory ()
+    : filename_ (),
+      dataRate_ (),
+      cameraRate_ (),
+      numFrames_ (),
+      numMarkers_ (),
+      units_ (),
+      origDataRate_ (),
+      origDataStartFrame_ (),
+      origNumFrames_ (),
+      markers_ (),
+      positions_ ()
   {
-    if (&rhs == this)
+  }
+
+  MarkerTrajectory::~MarkerTrajectory ()
+  {
+  }
+
+  MarkerTrajectory&
+  MarkerTrajectory::operator= (const MarkerTrajectory& rhs)
+  {
+    if (this == &rhs)
       return *this;
     return *this;
   }
 
   std::ostream&
-  Link::print (std::ostream& stream) const
+  MarkerTrajectory::print (std::ostream& o) const
   {
-    stream
-      << "link:\n"
-      << "name: " << name () << '\n'
-      << "color: " << color () << '\n'
-      << "type: " << type () << '\n'
-      << "marker 1: " << marker1 () << '\n'
-      << "marker 2: " << marker2 () << '\n'
-      << "min length: " << minLength () << '\n'
-      << "max length: " << maxLength () << '\n'
-      << "extra stretch: " << extraStretch ();
-    return stream;
+    o << "market trajectory:\n"
+      << "filename: " << filename () << '\n'
+      << "data rate: " << dataRate () << '\n'
+      << "camera rate: " << cameraRate () << '\n'
+      << "num frames: " << numFrames () << '\n'
+      << "num markers: " << numMarkers () << '\n'
+      << "units: " << units () << '\n'
+      << "origDataRate: " << origDataRate () << '\n'
+      << "origDataStartFrame: " << origDataStartFrame () << '\n'
+      << "origNumFrames: " << origNumFrames () << '\n'
+      << "markers: ";
+    std::copy
+      (markers ().begin (), markers ().end (),
+       std::ostream_iterator<std::string>(o, "\n"));
+    o << '\n'
+      << "positions: \n";
+    for (std::size_t frame = 0; frame < positions ().size (); ++frame)
+      {
+	std::copy
+	  (positions ()[frame].begin (), positions ()[frame].end (),
+	   std::ostream_iterator<double>(o, ", "));
+	o << '\n';
+      }
+    return o;
   }
 
-  std::ostream&
-  operator<< (std::ostream& o, const Link& markerSet)
+  LIBMOCAP_DLLEXPORT std::ostream&
+  operator<< (std::ostream& o, const MarkerTrajectory& trajectory)
   {
-    return markerSet.print (o);
+    return trajectory.print (o);
   }
-
 } // end of namespace libmocap.

@@ -37,7 +37,7 @@
 
 namespace libmocap
 {
-  class LIBMOCAP_DLLEXPORT LIBMOCAP_DLLEXPORT MarkerSetFactory
+  class LIBMOCAP_DLLEXPORT MarkerSetFactory
   {
   public:
     MarkerSetFactory ();

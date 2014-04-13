@@ -15,3 +15,4 @@ MACRO(LIBMOCAP_TEST NAME)
 ENDMACRO()
 
 LIBMOCAP_TEST(marker-set-factory)
+LIBMOCAP_TEST(marker-trajectory-factory)

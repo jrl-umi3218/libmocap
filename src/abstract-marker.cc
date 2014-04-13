@@ -33,6 +33,12 @@
 namespace libmocap
 {
   AbstractMarker::AbstractMarker ()
+    : id_ (),
+      name_ (),
+      color_ (),
+      physicalColor_ (),
+      size_ (),
+      optional_ ()
   {}
 
   AbstractMarker::~AbstractMarker ()

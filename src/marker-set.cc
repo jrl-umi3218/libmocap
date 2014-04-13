@@ -40,6 +40,11 @@ namespace libmocap
   }
 
   MarkerSet::MarkerSet ()
+    : name_ (),
+      markers_ (),
+      links_ (),
+      segments_ (),
+      poses_ ()
   {}
 
   MarkerSet::~MarkerSet ()

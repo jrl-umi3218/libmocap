@@ -33,6 +33,13 @@
 namespace libmocap
 {
   Segment::Segment ()
+    : id_ (),
+      name_ (),
+      children_ (),
+      originMarker_ (),
+      longAxisMarker_ (),
+      planeAxisMarker_ (),
+      rotationOffset_ ()
   {}
 
   Segment::~Segment ()

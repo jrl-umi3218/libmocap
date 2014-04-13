@@ -27,52 +27,41 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#include <iostream>
-#include <libmocap/link.hh>
+#include <stdexcept>
+#include <string>
+#include <libmocap/marker-trajectory-factory.hh>
+
+#include "trc-marker-trajectory-factory.hh"
 
 namespace libmocap
 {
-  Link::Link ()
-    : name_ (),
-      color_ (),
-      type_ (),
-      marker1_ (),
-      marker2_ (),
-      minLength_ (),
-      maxLength_ (),
-      extraStretch_ ()
+  MarkerTrajectoryFactory::MarkerTrajectoryFactory ()
   {}
 
-  Link::~Link ()
+  MarkerTrajectoryFactory::~MarkerTrajectoryFactory ()
   {}
 
-  Link& Link::operator= (const Link& rhs)
+  MarkerTrajectoryFactory&
+  MarkerTrajectoryFactory::operator= (const MarkerTrajectoryFactory& rhs)
   {
-    if (&rhs == this)
+    if (this == &rhs)
       return *this;
     return *this;
   }
 
-  std::ostream&
-  Link::print (std::ostream& stream) const
+  MarkerTrajectory
+  MarkerTrajectoryFactory::load (const std::string& filename)
   {
-    stream
-      << "link:\n"
-      << "name: " << name () << '\n'
-      << "color: " << color () << '\n'
-      << "type: " << type () << '\n'
-      << "marker 1: " << marker1 () << '\n'
-      << "marker 2: " << marker2 () << '\n'
-      << "min length: " << minLength () << '\n'
-      << "max length: " << maxLength () << '\n'
-      << "extra stretch: " << extraStretch ();
-    return stream;
-  }
+    if (TrcMarkerTrajectoryFactory::canLoad (filename))
+      {
+	TrcMarkerTrajectoryFactory factory;
+	return factory.load (filename);
+      }
 
-  std::ostream&
-  operator<< (std::ostream& o, const Link& markerSet)
-  {
-    return markerSet.print (o);
+    std::string error;
+    error = "failed to load "
+      + filename
+      + "': file format not supported";
+    throw std::runtime_error (error);
   }
-
 } // end of namespace libmocap.

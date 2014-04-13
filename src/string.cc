@@ -27,52 +27,21 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#include <iostream>
-#include <libmocap/link.hh>
+# include "string.hh"
 
 namespace libmocap
 {
-  Link::Link ()
-    : name_ (),
-      color_ (),
-      type_ (),
-      marker1_ (),
-      marker2_ (),
-      minLength_ (),
-      maxLength_ (),
-      extraStretch_ ()
-  {}
-
-  Link::~Link ()
-  {}
-
-  Link& Link::operator= (const Link& rhs)
+  std::string extractExtension (const std::string& filename)
   {
-    if (&rhs == this)
-      return *this;
-    return *this;
+    std::string::size_type idx = filename.rfind ('.');
+    if (idx != std::string::npos)
+      return filename.substr (idx + 1);
+    else
+      return filename;
   }
 
-  std::ostream&
-  Link::print (std::ostream& stream) const
+  void trimEndOfLine (std::string& s)
   {
-    stream
-      << "link:\n"
-      << "name: " << name () << '\n'
-      << "color: " << color () << '\n'
-      << "type: " << type () << '\n'
-      << "marker 1: " << marker1 () << '\n'
-      << "marker 2: " << marker2 () << '\n'
-      << "min length: " << minLength () << '\n'
-      << "max length: " << maxLength () << '\n'
-      << "extra stretch: " << extraStretch ();
-    return stream;
+    s.erase (s.find_last_not_of ("\n\r") + 1);
   }
-
-  std::ostream&
-  operator<< (std::ostream& o, const Link& markerSet)
-  {
-    return markerSet.print (o);
-  }
-
-} // end of namespace libmocap.
+} // end of namespace libmocap

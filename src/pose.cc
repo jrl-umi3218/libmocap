@@ -33,6 +33,7 @@
 namespace libmocap
 {
   Pose::Pose ()
+    : positions_ ()
   {}
 
   Pose::~Pose ()

@@ -27,52 +27,58 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#include <iostream>
-#include <libmocap/link.hh>
+
+#ifndef LIBMOCAP_MARKER_TRAJECTORY_HH
+# define LIBMOCAP_MARKER_TRAJECTORY_HH
+# include <iosfwd>
+# include <string>
+# include <vector>
+
+# include <libmocap/config.hh>
+# include <libmocap/abstract-marker.hh>
+# include <libmocap/util.hh>
 
 namespace libmocap
 {
-  Link::Link ()
-    : name_ (),
-      color_ (),
-      type_ (),
-      marker1_ (),
-      marker2_ (),
-      minLength_ (),
-      maxLength_ (),
-      extraStretch_ ()
-  {}
-
-  Link::~Link ()
-  {}
-
-  Link& Link::operator= (const Link& rhs)
+  class LIBMOCAP_DLLEXPORT MarkerTrajectory
   {
-    if (&rhs == this)
-      return *this;
-    return *this;
-  }
+  public:
+    MarkerTrajectory ();
+    virtual ~MarkerTrajectory ();
+    MarkerTrajectory& operator= (const MarkerTrajectory& rhs);
 
-  std::ostream&
-  Link::print (std::ostream& stream) const
-  {
-    stream
-      << "link:\n"
-      << "name: " << name () << '\n'
-      << "color: " << color () << '\n'
-      << "type: " << type () << '\n'
-      << "marker 1: " << marker1 () << '\n'
-      << "marker 2: " << marker2 () << '\n'
-      << "min length: " << minLength () << '\n'
-      << "max length: " << maxLength () << '\n'
-      << "extra stretch: " << extraStretch ();
-    return stream;
-  }
+    LIBMOCAP_ACCESSOR (filename, std::string);
+    LIBMOCAP_ACCESSOR (dataRate, double);
+    LIBMOCAP_ACCESSOR (cameraRate, double);
+    LIBMOCAP_ACCESSOR (numFrames, int);
+    LIBMOCAP_ACCESSOR (numMarkers, int);
+    LIBMOCAP_ACCESSOR (units, std::string);
+    LIBMOCAP_ACCESSOR (origDataRate, double);
+    LIBMOCAP_ACCESSOR (origDataStartFrame, int);
+    LIBMOCAP_ACCESSOR (origNumFrames, int);
 
-  std::ostream&
-  operator<< (std::ostream& o, const Link& markerSet)
-  {
-    return markerSet.print (o);
-  }
+    LIBMOCAP_ACCESSOR (markers, std::vector<std::string> );
+    LIBMOCAP_ACCESSOR (positions, std::vector<std::vector<double> >);
+
+    std::ostream& print (std::ostream& o) const;
+  private:
+    std::string filename_;
+    double dataRate_;
+    double cameraRate_;
+    int numFrames_;
+    int numMarkers_;
+    std::string units_;
+    double origDataRate_;
+    int origDataStartFrame_;
+    int origNumFrames_;
+
+    std::vector<std::string> markers_;
+    std::vector<std::vector<double> > positions_;
+  };
+
+  LIBMOCAP_DLLEXPORT std::ostream&
+  operator<< (std::ostream& o, const MarkerTrajectory& trajectory);
 
 } // end of namespace libmocap.
+
+#endif //! LIBMOCAP_MARKER_TRAJECTORY_HH

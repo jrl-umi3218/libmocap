@@ -40,6 +40,7 @@
 #include <libmocap/marker.hh>
 
 #include "mars-marker-set-factory.hh"
+#include "string.hh"
 
 // Please note that eof is checked before and after peek as peek will
 // fail is eof is already reached but may also change the stream
@@ -140,29 +141,6 @@ namespace libmocap
     {"Weight", 0},
     {0, 0},
   };
-
-  static std::string extractExtension (const std::string& filename)
-  {
-    std::string::size_type idx = filename.rfind ('.');
-    if (idx != std::string::npos)
-      return filename.substr (idx + 1);
-    else
-      return filename;
-  }
-
-  static void trimEndOfLine (std::string& s)
-  {
-    s.erase (s.find_last_not_of ("\n\r") + 1);
-  }
-
-  template <typename T>
-  static T convert (const std::string& s)
-  {
-    T res;
-    std::istringstream ss (s);
-    ss >> res;
-    return res;
-  }
 
   MarsMarkerSetFactory::MarsMarkerSetFactory ()
   {}

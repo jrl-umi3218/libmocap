@@ -27,52 +27,60 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#include <iostream>
-#include <libmocap/link.hh>
+
+#ifndef LIBMOCAP_TRC_MARKER_TRAJECTORY_FACTORY_HH
+# define LIBMOCAP_TRC_MARKER_TRAJECTORY_FACTORY_HH
+# include <iosfwd>
+# include <string>
+
+# include <libmocap/marker-trajectory.hh>
 
 namespace libmocap
 {
-  Link::Link ()
-    : name_ (),
-      color_ (),
-      type_ (),
-      marker1_ (),
-      marker2_ (),
-      minLength_ (),
-      maxLength_ (),
-      extraStretch_ ()
-  {}
+  class VariableMapper;
 
-  Link::~Link ()
-  {}
-
-  Link& Link::operator= (const Link& rhs)
+  class TrcMarkerTrajectoryFactory
   {
-    if (&rhs == this)
-      return *this;
-    return *this;
-  }
+  public:
+    TrcMarkerTrajectoryFactory ();
+    ~TrcMarkerTrajectoryFactory ();
+    TrcMarkerTrajectoryFactory& operator= (const TrcMarkerTrajectoryFactory& rhs);
 
-  std::ostream&
-  Link::print (std::ostream& stream) const
-  {
-    stream
-      << "link:\n"
-      << "name: " << name () << '\n'
-      << "color: " << color () << '\n'
-      << "type: " << type () << '\n'
-      << "marker 1: " << marker1 () << '\n'
-      << "marker 2: " << marker2 () << '\n'
-      << "min length: " << minLength () << '\n'
-      << "max length: " << maxLength () << '\n'
-      << "extra stretch: " << extraStretch ();
-    return stream;
-  }
+    MarkerTrajectory load (const std::string& filename);
 
-  std::ostream&
-  operator<< (std::ostream& o, const Link& markerSet)
-  {
-    return markerSet.print (o);
-  }
+    static bool canLoad (const std::string& filename);
 
+
+    void
+    loadDataRate
+    (MarkerTrajectory& trajectory, const std::string& value);
+    void
+    loadCameraRate
+    (MarkerTrajectory& trajectory, const std::string& value);
+    void
+    loadNumFrames
+    (MarkerTrajectory& trajectory, const std::string& value);
+    void
+    loadNumMarkers
+    (MarkerTrajectory& trajectory, const std::string& value);
+    void
+    loadUnits
+    (MarkerTrajectory& trajectory, const std::string& value);
+    void
+    loadOrigDataRate
+    (MarkerTrajectory& trajectory, const std::string& value);
+    void
+    loadOrigDataStartFrame
+    (MarkerTrajectory& trajectory, const std::string& value);
+    void
+    loadOrigNumFrames
+    (MarkerTrajectory& trajectory, const std::string& value);
+
+  private:
+    void loadHeader (std::ifstream& file, MarkerTrajectory& trajectory);
+    void loadData (std::ifstream& file, MarkerTrajectory& trajectory);
+
+  };
 } // end of namespace libmocap.
+
+#endif //! LIBMOCAP_TRC_MARKER_TRAJECTORY_HH

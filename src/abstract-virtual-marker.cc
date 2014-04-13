@@ -32,7 +32,10 @@
 namespace libmocap
 {
   AbstractVirtualMarker::AbstractVirtualMarker ()
-    : AbstractMarker ()
+    : AbstractMarker (),
+      originMarker_ (),
+      longAxisMarker_ (),
+      planeAxisMarker_ ()
   {}
 
   AbstractVirtualMarker::~AbstractVirtualMarker ()

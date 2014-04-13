@@ -33,7 +33,8 @@
 namespace libmocap
 {
   VirtualMarkerRatio::VirtualMarkerRatio ()
-    : AbstractVirtualMarker ()
+    : AbstractVirtualMarker (),
+      weights_ ()
   {}
 
   VirtualMarkerRatio::~VirtualMarkerRatio ()
