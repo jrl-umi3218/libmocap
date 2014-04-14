@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
+#include <libmocap/marker-set-factory.hh>
 #include <libmocap/marker-trajectory-factory.hh>
 
 #include <ros/ros.h>
@@ -9,13 +10,16 @@
 
 int mainSafe (int argc, char* argv[])
 {
-  if (argc != 2)
+  if (argc != 2 && argc != 3)
     {
       std::cout <<
-	"usage: ros-viewer TRC_FILE\n"
+	"usage: ros-viewer TRC_FILE [MARS_FILE]\n"
 	"\n"
 	"TRC_FILE must be a valid TRC files\n"
 	"i.e. a file containing markers trajectories\n"
+	"\n"
+	"an optional marker set file (MARS_FILE)\n"
+	"can be given to enhance data display\n"
 	;
       return 1;
     }
@@ -24,6 +28,16 @@ int mainSafe (int argc, char* argv[])
   libmocap::MarkerTrajectoryFactory factory;
   libmocap::MarkerTrajectory trajectory = factory.load (filename);
   trajectory.normalize ();
+
+  libmocap::MarkerSet markerSet;
+  if (argc == 3)
+    {
+      std::string filenameMars = argv[2];
+      libmocap::MarkerSetFactory factoryMarkerSet;
+      markerSet = factoryMarkerSet.load (filenameMars);
+      std::cout << markerSet << std::endl;
+    }
+
 
   ros::init(argc, argv, "libmocap");
 
@@ -63,27 +77,38 @@ int mainSafe (int argc, char* argv[])
   marker.color.a = 1.0;
 
   marker.lifetime = ros::Duration ();
+  marker.points.resize (trajectory.numMarkers ());
 
-  marker.points.resize (trajectory.numMarkers () * 3);
   int offset = 1;
+  //int markerId;
 
   for (int frameId = 0; frameId < trajectory.numFrames (); ++frameId)
     {
       std::cout << "Frame: " << frameId << '\n';
 
       // Fill marker information
+      if (frameId >= static_cast<int> (trajectory.positions ().size ()))
+	{
+	  std::cerr << "size mismatch (trajectory)" << std::endl;
+	  continue;
+	}
       if (trajectory.positions ()[frameId].empty ())
-	continue;
-      marker.points.resize (trajectory.positions ()[frameId].size () - 1);
-      for (int i = 0;
-	   i < static_cast<int>(trajectory.positions ()[frameId].size ()) - 1; ++i)
+	{
+	  std::cerr << "size mismatch (frame in trajectory)" << std::endl;
+	  continue;
+	}
+      for (int i = 0; i < trajectory.numMarkers (); ++i)
       	{
+	  if (offset + i * 3 + 2
+	      >= static_cast<int> (trajectory.positions ()[frameId].size ()))
+	    {
+	      std::cerr << "size mismatch (while iterating)" << std::endl;
+	      continue;
+	    }
       	  marker.points[i].x = trajectory.positions ()[frameId][offset + i * 3 + 0];
       	  marker.points[i].y = trajectory.positions ()[frameId][offset + i * 3 + 1];
       	  marker.points[i].z = trajectory.positions ()[frameId][offset + i * 3 + 2];
       	}
-
-      // Publish topics
       std::cout << "publishing frame " << frameId << std::endl;
 
       ++marker.header.seq;
