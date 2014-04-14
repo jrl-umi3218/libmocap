@@ -29,6 +29,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <iostream>
 #include <iterator>
+#include <stdexcept>
 #include <libmocap/marker-trajectory.hh>
 
 namespace libmocap
@@ -60,6 +61,33 @@ namespace libmocap
     return *this;
   }
 
+  void
+  MarkerTrajectory::normalize ()
+  {
+    double scalingFactor = 1.;
+    if (units () == "m")
+      return;
+    else if (units () == "mm")
+      scalingFactor = 1e-3;
+    else
+      throw std::runtime_error ("unit not supported");
+
+    std::vector<std::vector<double> >::iterator itFrame;
+    std::vector<double>::iterator itValue;
+    for (itFrame = positions ().begin ();
+	 itFrame != positions ().end (); ++itFrame)
+      {
+	// pass first elements which does not have to be scaled (time)
+	itValue = itFrame->begin ();
+	if (itValue == itFrame->end ())
+	  continue;
+	for (++itValue; itValue != itFrame->end (); ++itValue)
+	  *itValue = *itValue * scalingFactor;
+      }
+
+    units () = "m";
+  }
+
   std::ostream&
   MarkerTrajectory::print (std::ostream& o) const
   {
@@ -81,9 +109,12 @@ namespace libmocap
       << "positions: \n";
     for (std::size_t frame = 0; frame < positions ().size (); ++frame)
       {
-	std::copy
-	  (positions ()[frame].begin (), positions ()[frame].end (),
-	   std::ostream_iterator<double>(o, ", "));
+	if (positions ()[frame].empty ())
+	  o << "(empty vector)";
+	else
+	  std::copy
+	    (positions ()[frame].begin (), positions ()[frame].end (),
+	     std::ostream_iterator<double>(o, ", "));
 	o << '\n';
       }
     return o;

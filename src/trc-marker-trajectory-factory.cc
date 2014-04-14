@@ -177,8 +177,10 @@ namespace libmocap
     // Discard TRC header.
     std::getline (file, line);
     std::getline (file, line);
+    std::getline (file, line);
 
-    trajectory.positions ().reserve (trajectory.numFrames ());
+    trajectory.positions ().clear ();
+    trajectory.positions ().resize (trajectory.numFrames (), std::vector<double> ());
 
     while (!file.eof ())
       {
@@ -196,12 +198,20 @@ namespace libmocap
 	      throw;
 	  }
 	trimEndOfLine (line);
-
-	trajectory.positions ().push_back (std::vector<double> ());
-
 	std::istringstream stream (line);
 	stream >> value;
-	frameId = convert<int> (value);
+	frameId = convert<int> (value) - 1;
+	if (frameId < 0
+	    || frameId >= static_cast<int> (trajectory.positions ().size ()))
+	  {
+	    std::stringstream error;
+	    error << "invalid frame id (number of frames is "
+		  << trajectory.numFrames ()
+		  << " but data size is "
+		  << frameId
+		  << ")";
+	    throw std::runtime_error (error.str ());
+	  }
 
 	trajectory.positions ()[frameId].reserve (3 * trajectory.numMarkers () + 1);
 	while (stream >> value)

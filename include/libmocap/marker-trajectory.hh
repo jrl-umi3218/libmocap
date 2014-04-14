@@ -60,6 +60,9 @@ namespace libmocap
     LIBMOCAP_ACCESSOR (markers, std::vector<std::string> );
     LIBMOCAP_ACCESSOR (positions, std::vector<std::vector<double> >);
 
+    /// \brief Convert internal units to meters.
+    void normalize ();
+
     std::ostream& print (std::ostream& o) const;
   private:
     std::string filename_;
