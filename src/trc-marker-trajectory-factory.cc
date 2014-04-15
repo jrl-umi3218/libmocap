@@ -180,7 +180,9 @@ namespace libmocap
     std::getline (file, line);
 
     trajectory.positions ().clear ();
-    trajectory.positions ().resize (trajectory.numFrames (), std::vector<double> ());
+    trajectory.positions ().resize
+      (trajectory.numFrames (),
+       std::vector<double> (1 + trajectory.numMarkers () * 3));
 
     while (!file.eof ())
       {
@@ -213,9 +215,37 @@ namespace libmocap
 	    throw std::runtime_error (error.str ());
 	  }
 
-	trajectory.positions ()[frameId].reserve (3 * trajectory.numMarkers () + 1);
+	int markerId = 0;
 	while (stream >> value)
-	  trajectory.positions ()[frameId].push_back (convert<double> (value));
+	  {
+	    if (markerId >= 1 + trajectory.numMarkers () * 3)
+	      {
+		std::stringstream stream;
+		stream
+		  << "size data mismatch, expected size is "
+		  << 1 + trajectory.numMarkers () * 3
+		  << ", but "
+		  << markerId
+		  << " have already been read";
+		std::cerr << stream.str () << std::endl;
+		continue;
+	      }
+	    trajectory.positions ()[frameId][markerId++] = convert<double> (value);
+	  }
+	if (markerId != 1 + trajectory.numMarkers () * 3)
+	  {
+	    std::stringstream stream;
+	    stream
+	      << "size data mismatch, expected size is "
+	      << 1 + trajectory.numMarkers () * 3
+	      << ", but only "
+	      << markerId
+	      << " have been read";
+	    std::cerr << stream.str () << std::endl;
+
+	    while (markerId < 1 + trajectory.numMarkers () * 3)
+	      trajectory.positions ()[frameId][markerId++] = 0.;
+	  }
       }
   }
 

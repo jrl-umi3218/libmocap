@@ -102,7 +102,13 @@ int mainSafe (int argc, char* argv[])
 	  if (offset + i * 3 + 2
 	      >= static_cast<int> (trajectory.positions ()[frameId].size ()))
 	    {
-	      std::cerr << "size mismatch (while iterating)" << std::endl;
+	      std::stringstream stream;
+	      stream
+		<< "size mismatch (while iterating, size is "
+		<< trajectory.positions ()[frameId].size ()
+		<< " but we already are at "
+		<< offset + i * 3 + 2 << ")";
+	      std::cerr << stream.str () << std::endl;
 	      continue;
 	    }
       	  marker.points[i].x = trajectory.positions ()[frameId][offset + i * 3 + 0];
