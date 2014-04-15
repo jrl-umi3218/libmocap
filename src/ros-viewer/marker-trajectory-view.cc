@@ -28,16 +28,57 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <iostream>
+
+#include <std_msgs/ColorRGBA.h>
+
 #include "marker-trajectory-view.hh"
 
 namespace libmocap
 {
+  static void setDefaultColor (std_msgs::ColorRGBA& color)
+  {
+    color.r = static_cast<float> ((rand () % 256) / 256.);
+    color.g = static_cast<float> ((rand () % 256) / 256.);
+    color.b = static_cast<float> ((rand () % 256) / 256.);
+    color.a = 1.;
+  }
+
   MarkerTrajectoryView::MarkerTrajectoryView
-  (const MarkerTrajectory& trajectory)
+  (const MarkerTrajectory& trajectory,
+   const MarkerSet& markerSet)
     : View (),
-      trajectory_ (trajectory)
+      trajectory_ (trajectory),
+      markerSet_ (markerSet)
   {
     msg_.points.resize (trajectory.numMarkers ());
+
+    msg_.colors.resize (trajectory.numMarkers ());
+    std::string markerLabel;
+    for (int i = 0; i < trajectory.numMarkers (); ++i)
+      {
+	if (i >= static_cast<int> (trajectory.markers ().size ()))
+	  {
+	    setDefaultColor (msg_.colors[i]);
+	    continue;
+	  }
+	markerLabel = trajectory.markers ()[i];
+	try
+	  {
+	    const AbstractMarker& marker = markerSet.markerByName (markerLabel);
+	    msg_.colors[i].r = static_cast<float> (marker.color ().red () / 256.);
+	    msg_.colors[i].g = static_cast<float> (marker.color ().green () / 256.);
+	    msg_.colors[i].b = static_cast<float> (marker.color ().blue () / 256.);
+	    msg_.colors[i].a = 1.;
+	  }
+	catch (const std::exception& e)
+	  {
+	    std::string error =
+	      "failed to find marker `" + markerLabel + "', using random color instead";
+	    std::cerr << error << std::endl;
+	    setDefaultColor (msg_.colors[i]);
+	  }
+
+      }
   }
 
   MarkerTrajectoryView::~MarkerTrajectoryView ()

@@ -31,6 +31,7 @@
 #ifndef LIBMOCAP_ROS_VIEWER_MARKER_TRAJECTORY_VIEW_HH
 # define LIBMOCAP_ROS_VIEWER_MARKER_TRAJECTORY_VIEW_HH
 # include <libmocap/marker-trajectory.hh>
+# include <libmocap/marker-set.hh>
 
 # include "view.hh"
 
@@ -39,13 +40,15 @@ namespace libmocap
   class MarkerTrajectoryView : public View
   {
   public:
-    MarkerTrajectoryView (const MarkerTrajectory&);
+    MarkerTrajectoryView (const MarkerTrajectory&,
+			  const MarkerSet&);
     ~MarkerTrajectoryView ();
 
     virtual void
     updateMessage (int frameId, visualization_msgs::Marker& msg);
   private:
     const MarkerTrajectory& trajectory_;
+    const MarkerSet& markerSet_;
   };
 } // end of namespace libmocap
 

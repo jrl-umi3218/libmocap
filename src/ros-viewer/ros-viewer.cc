@@ -19,13 +19,13 @@ namespace libmocap
   public:
     MarkerPublisher (ros::NodeHandle& n,
 		     libmocap::MarkerTrajectory& trajectory,
-		     libmocap::MarkerSet& /*markerSet*/)
+		     libmocap::MarkerSet& markerSet)
       : n_ (n),
 	pub_ (n.advertise<visualization_msgs::MarkerArray>("markers", 1, true)),
 	msg_ (),
 	views_ ()
     {
-      views_.push_back (new MarkerTrajectoryView (trajectory));
+      views_.push_back (new MarkerTrajectoryView (trajectory, markerSet));
     }
 
     ~MarkerPublisher ()
