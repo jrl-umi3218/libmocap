@@ -1,3 +1,5 @@
+#include <ncurses.h>
+
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
@@ -59,6 +61,26 @@ namespace libmocap
   };
 } // end of namespace libmocap.
 
+std::string makeProgressBar (int frameId, int nFrames, int len)
+{
+  std::string result;
+  result.reserve (len);
+
+  int progress = frameId * (len - 2) / nFrames;
+
+  result += '|';
+
+  for (int pos = 0; pos < len - 2; ++pos)
+    if (pos <= progress)
+      result += '#';
+    else
+      result += ' ';
+
+  result += "|";
+
+  return result;
+}
+
 int mainSafe (int argc, char* argv[])
 {
   if (argc != 2 && argc != 3)
@@ -86,21 +108,86 @@ int mainSafe (int argc, char* argv[])
       std::string filenameMars = argv[2];
       libmocap::MarkerSetFactory factoryMarkerSet;
       markerSet = factoryMarkerSet.load (filenameMars);
-      std::cout << markerSet << std::endl;
     }
 
   ros::init (argc, argv, "libmocap");
   ros::NodeHandle n;
   libmocap::MarkerPublisher markerPublisher (n, trajectory, markerSet);
+
+
+  int frameId = 0;
+  bool play = true;
+
+  int ch;
+
+  initscr ();
+  cbreak ();
+  keypad (stdscr, TRUE);
+  noecho ();
+  curs_set (0);
+  nodelay (stdscr, TRUE);
+
+  int row, col;
+  std::string mesg1 = "ROS Motion Capture Data Player";
+  std::string mesg2;
+  std::string mesg3;
+
   ros::Rate r (trajectory.dataRate ());
-  for (int frameId = 0; frameId < trajectory.numFrames (); ++frameId)
+  while (ros::ok ())
     {
-      std::cout << "Frame: " << frameId << '\n';
-      markerPublisher.publish (frameId);
+      // Input management.
+      ch = getch ();
+      if (ch == KEY_RIGHT)
+	{
+	  if (frameId < trajectory.numFrames () - 1)
+	    frameId++;
+	}
+      else if (ch == KEY_LEFT)
+	{
+	  if (frameId > 0)
+	    frameId--;
+	}
+      else if (ch == KEY_F (2))
+	{
+	  ros::shutdown ();
+	  break;
+	}
+      else if (ch == ' ')
+	play = !play;
+
+      clear ();
+      getmaxyx (stdscr, row, col);
+
+      std::stringstream stream;
+      stream
+	<< "frame " << frameId << " / " << trajectory.numFrames () - 1
+	<< " (play = " << (play ? "on" : "off") << ")";
+      mesg2 = stream.str ();
+      mesg3 = makeProgressBar (frameId, trajectory.numFrames (),
+			       static_cast<int> (.75 * col));
+
+      mvprintw (row / 2 - 1, (col - static_cast<int> (mesg1.size ())) / 2, "%s", mesg1.c_str ());
+      mvprintw (row / 2, (col - static_cast<int> (mesg2.size ())) / 2, "%s", mesg2.c_str ());
+      mvprintw (row / 2 + 1, (col - static_cast<int> (mesg3.size ())) / 2, "%s", mesg3.c_str ());
+
+      refresh ();
+
+      ros::spinOnce ();
+
+      if (play)
+	{
+	  if (frameId < trajectory.numFrames () - 1)
+	    ++frameId;
+	  else
+	    frameId = 0;
+	}
+      if (ros::ok ())
+	markerPublisher.publish (frameId);
+
       r.sleep ();
-      if (!ros::ok ())
-	return 0;
     }
+  endwin ();
+
   return 0;
 }
 

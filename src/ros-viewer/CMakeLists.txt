@@ -1,5 +1,9 @@
 INCLUDE(../../cmake/ros.cmake)
 
+FIND_PACKAGE(Curses)
+
+INCLUDE_DIRECTORIES(${CURSES_INCLUDE_DIR})
+
 ADD_REQUIRED_DEPENDENCY(rosconsole)
 ADD_REQUIRED_DEPENDENCY(roscpp)
 
@@ -11,4 +15,6 @@ ADD_EXECUTABLE(ros-viewer
 
 PKG_CONFIG_USE_DEPENDENCY(ros-viewer rosconsole)
 PKG_CONFIG_USE_DEPENDENCY(ros-viewer roscpp)
-TARGET_LINK_LIBRARIES(ros-viewer mocap)
+TARGET_LINK_LIBRARIES(ros-viewer
+  mocap ${CURSES_LIBRARIES}
+  )
