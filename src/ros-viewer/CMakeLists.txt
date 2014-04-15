@@ -3,7 +3,12 @@ INCLUDE(../../cmake/ros.cmake)
 ADD_REQUIRED_DEPENDENCY(rosconsole)
 ADD_REQUIRED_DEPENDENCY(roscpp)
 
-ADD_EXECUTABLE(ros-viewer ros-viewer.cc)
+ADD_EXECUTABLE(ros-viewer
+  ros-viewer.cc
+
+  marker-trajectory-view.cc
+  view.cc)
+
 PKG_CONFIG_USE_DEPENDENCY(ros-viewer rosconsole)
 PKG_CONFIG_USE_DEPENDENCY(ros-viewer roscpp)
 TARGET_LINK_LIBRARIES(ros-viewer mocap)

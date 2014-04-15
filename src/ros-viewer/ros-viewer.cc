@@ -7,6 +7,57 @@
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
 #include <visualization_msgs/Marker.h>
+#include <visualization_msgs/MarkerArray.h>
+
+#include "view.hh"
+#include "marker-trajectory-view.hh"
+
+namespace libmocap
+{
+  class MarkerPublisher
+  {
+  public:
+    MarkerPublisher (ros::NodeHandle& n,
+		     libmocap::MarkerTrajectory& trajectory,
+		     libmocap::MarkerSet& /*markerSet*/)
+      : n_ (n),
+	pub_ (n.advertise<visualization_msgs::MarkerArray>("markers", 1, true)),
+	msg_ (),
+	views_ ()
+    {
+      views_.push_back (new MarkerTrajectoryView (trajectory));
+    }
+
+    ~MarkerPublisher ()
+    {
+      std::vector<View*>::const_iterator it;
+      for (it = views_.begin (); it != views_.end (); ++it)
+	delete *it;
+    }
+
+    void publish (int frameId)
+    {
+      updateMessage (frameId);
+      pub_.publish (msg_);
+    }
+
+  private:
+    void updateMessage (int frameId)
+    {
+      msg_.markers.resize (views_.size ());
+      std::vector<View*>::const_iterator it;
+      for (it = views_.begin (); it != views_.end (); ++it)
+	if (*it)
+	  msg_.markers[it - views_.begin ()] = (*it)->markerMessage (frameId);
+    }
+
+    ros::NodeHandle& n_;
+    ros::Publisher pub_;
+    visualization_msgs::MarkerArray msg_;
+
+    std::vector<View*> views_;
+  };
+} // end of namespace libmocap.
 
 int mainSafe (int argc, char* argv[])
 {
@@ -38,88 +89,14 @@ int mainSafe (int argc, char* argv[])
       std::cout << markerSet << std::endl;
     }
 
-
-  ros::init(argc, argv, "libmocap");
-
+  ros::init (argc, argv, "libmocap");
   ros::NodeHandle n;
+  libmocap::MarkerPublisher markerPublisher (n, trajectory, markerSet);
   ros::Rate r (trajectory.dataRate ());
-  ros::Publisher markerPub =
-    n.advertise<visualization_msgs::Marker>("markers", 1, true);
-
-  visualization_msgs::Marker marker;
-  marker.header.frame_id = "/world";
-  marker.header.stamp = ros::Time::now ();
-  marker.ns = "markers";
-  marker.id = 0;
-  marker.type = visualization_msgs::Marker::SPHERE_LIST;
-
-  // Set the marker action.  Options are ADD and DELETE
-  marker.action = visualization_msgs::Marker::ADD;
-
-  // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
-  marker.pose.position.x = 0;
-  marker.pose.position.y = 0;
-  marker.pose.position.z = 0;
-  marker.pose.orientation.x = 0.0;
-  marker.pose.orientation.y = 0.0;
-  marker.pose.orientation.z = 0.0;
-  marker.pose.orientation.w = 1.0;
-
-  // Set the scale of the marker -- 0.05x0.05x0.05 here means 5cm radius
-  marker.scale.x = 0.05;
-  marker.scale.y = 0.05;
-  marker.scale.z = 0.05;
-
-  // Set the color -- be sure to set alpha to something non-zero!
-  marker.color.r = 0.0f;
-  marker.color.g = 1.0f;
-  marker.color.b = 0.0f;
-  marker.color.a = 1.0;
-
-  marker.lifetime = ros::Duration ();
-  marker.points.resize (trajectory.numMarkers ());
-
-  int offset = 1;
-  //int markerId;
-
   for (int frameId = 0; frameId < trajectory.numFrames (); ++frameId)
     {
       std::cout << "Frame: " << frameId << '\n';
-
-      // Fill marker information
-      if (frameId >= static_cast<int> (trajectory.positions ().size ()))
-	{
-	  std::cerr << "size mismatch (trajectory)" << std::endl;
-	  continue;
-	}
-      if (trajectory.positions ()[frameId].empty ())
-	{
-	  std::cerr << "size mismatch (frame in trajectory)" << std::endl;
-	  continue;
-	}
-      for (int i = 0; i < trajectory.numMarkers (); ++i)
-      	{
-	  if (offset + i * 3 + 2
-	      >= static_cast<int> (trajectory.positions ()[frameId].size ()))
-	    {
-	      std::stringstream stream;
-	      stream
-		<< "size mismatch (while iterating, size is "
-		<< trajectory.positions ()[frameId].size ()
-		<< " but we already are at "
-		<< offset + i * 3 + 2 << ")";
-	      std::cerr << stream.str () << std::endl;
-	      continue;
-	    }
-      	  marker.points[i].x = trajectory.positions ()[frameId][offset + i * 3 + 0];
-      	  marker.points[i].y = trajectory.positions ()[frameId][offset + i * 3 + 1];
-      	  marker.points[i].z = trajectory.positions ()[frameId][offset + i * 3 + 2];
-      	}
-      std::cout << "publishing frame " << frameId << std::endl;
-
-      ++marker.header.seq;
-      marker.header.stamp = ros::Time::now();
-      markerPub.publish (marker);
+      markerPublisher.publish (frameId);
       r.sleep ();
       if (!ros::ok ())
 	return 0;
