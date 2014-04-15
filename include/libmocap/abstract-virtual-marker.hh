@@ -42,6 +42,7 @@ namespace libmocap
   {
   public:
     AbstractVirtualMarker ();
+    AbstractVirtualMarker (const AbstractVirtualMarker&);
     virtual ~AbstractVirtualMarker ();
     AbstractVirtualMarker& operator= (const AbstractVirtualMarker& rhs);
 

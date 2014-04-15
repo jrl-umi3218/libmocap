@@ -37,6 +37,12 @@ namespace libmocap
       weights_ ()
   {}
 
+  VirtualMarkerRatio::VirtualMarkerRatio
+  (const VirtualMarkerRatio& rhs)
+    : AbstractVirtualMarker (),
+      weights_ (rhs.weights_)
+  {}
+
   VirtualMarkerRatio::~VirtualMarkerRatio ()
   {}
 
@@ -45,6 +51,8 @@ namespace libmocap
   {
     if (&rhs == this)
       return *this;
+    AbstractVirtualMarker::operator= (rhs);
+    weights_ = rhs.weights_;
     return *this;
   }
 
@@ -53,6 +61,12 @@ namespace libmocap
   {
     AbstractVirtualMarker::print (stream);
     return stream;
+  }
+
+  AbstractMarker*
+  VirtualMarkerRatio::clone () const
+  {
+    return new VirtualMarkerRatio (*this);
   }
 
   std::ostream&

@@ -42,12 +42,15 @@ namespace libmocap
   {
   public:
     VirtualMarkerRatio ();
+    VirtualMarkerRatio (const VirtualMarkerRatio&);
     virtual ~VirtualMarkerRatio ();
     VirtualMarkerRatio& operator= (const VirtualMarkerRatio& rhs);
 
     LIBMOCAP_ACCESSOR (weights, std::vector<double>);
 
     std::ostream& print (std::ostream& o) const;
+
+    AbstractMarker* clone () const;
   private:
     std::vector<double> weights_;
   };

@@ -44,6 +44,7 @@ namespace libmocap
   {
   public:
     MarkerTrajectory ();
+    MarkerTrajectory (const MarkerTrajectory&);
     virtual ~MarkerTrajectory ();
     MarkerTrajectory& operator= (const MarkerTrajectory& rhs);
 

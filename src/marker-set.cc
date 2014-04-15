@@ -29,6 +29,8 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <algorithm>
 #include <iterator>
+#include <stdexcept>
+
 #include <libmocap/marker-set.hh>
 
 namespace libmocap
@@ -47,6 +49,20 @@ namespace libmocap
       poses_ ()
   {}
 
+  MarkerSet::MarkerSet (const MarkerSet& rhs)
+    : name_ (rhs.name_),
+      markers_ (),
+      links_ (rhs.links_),
+      segments_ (rhs.segments_),
+      poses_ (rhs.poses_)
+  {
+    std::vector<AbstractMarker*>::const_iterator it;
+    for (it = rhs.markers_.begin (); it != rhs.markers_.end (); ++it)
+      if (*it)
+	markers_.push_back ((*it)->clone ());
+  }
+
+
   MarkerSet::~MarkerSet ()
   {
     std::vector<AbstractMarker*>::const_iterator it;
@@ -60,6 +76,16 @@ namespace libmocap
   {
     if (&rhs == this)
       return *this;
+    name_ = rhs.name_;
+
+    std::vector<AbstractMarker*>::const_iterator it;
+    for (it = rhs.markers_.begin (); it != rhs.markers_.end (); ++it)
+      if (*it)
+	markers_.push_back ((*it)->clone ());
+
+    links_ = rhs.links_;
+    segments_ = rhs.segments_;
+    poses_ = rhs.poses_;
     return *this;
   }
 
@@ -97,6 +123,21 @@ namespace libmocap
        std::ostream_iterator<Pose>(stream, "\n"));
     stream << '\n';
     return stream;
+  }
+
+  const AbstractMarker&
+  MarkerSet::markerByName (const std::string name) const
+  {
+    std::vector<AbstractMarker*>::const_iterator it;
+    for (it = markers_.begin (); it != markers_.end (); ++it)
+      {
+	if (*it && (*it)->name () == name)
+	  return **it;
+      }
+
+    std::string error =
+      "marker " + name + " does not exist";
+    throw std::runtime_error (error);
   }
 
   std::ostream&

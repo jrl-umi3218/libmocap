@@ -36,6 +36,10 @@ namespace libmocap
     : positions_ ()
   {}
 
+  Pose::Pose (const Pose& rhs)
+    : positions_ (rhs.positions_)
+  {}
+
   Pose::~Pose ()
   {}
 
@@ -43,6 +47,7 @@ namespace libmocap
   {
     if (this == &rhs)
       return *this;
+    positions_ = rhs.positions_;
     return *this;
   }
 

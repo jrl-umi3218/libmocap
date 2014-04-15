@@ -43,12 +43,15 @@ namespace libmocap
   {
   public:
     VirtualMarkerMeasured ();
+    VirtualMarkerMeasured (const VirtualMarkerMeasured&);
     virtual ~VirtualMarkerMeasured ();
     VirtualMarkerMeasured& operator= (const VirtualMarkerMeasured& rhs);
 
     LIBMOCAP_ACCESSOR (offset, std::vector<double>);
 
     std::ostream& print (std::ostream& o) const;
+
+    AbstractMarker* clone () const;
   private:
     std::vector<double> offset_;
   };

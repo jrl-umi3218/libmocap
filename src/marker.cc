@@ -36,6 +36,10 @@ namespace libmocap
     : AbstractMarker ()
   {}
 
+  Marker::Marker (const Marker& rhs)
+    : AbstractMarker (rhs)
+  {}
+
   Marker::~Marker ()
   {}
 
@@ -44,6 +48,7 @@ namespace libmocap
   {
     if (this == &rhs)
       return *this;
+    AbstractMarker::operator= (rhs);
     return *this;
   }
 
@@ -52,6 +57,12 @@ namespace libmocap
   {
     AbstractMarker::print (stream);
     return stream;
+  }
+
+  AbstractMarker*
+  Marker::clone () const
+  {
+    return new Marker (*this);
   }
 
   std::ostream&

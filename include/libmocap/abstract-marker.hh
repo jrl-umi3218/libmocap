@@ -43,6 +43,7 @@ namespace libmocap
   {
   public:
     AbstractMarker ();
+    AbstractMarker (const AbstractMarker&);
     virtual ~AbstractMarker ();
     AbstractMarker& operator= (const AbstractMarker& rhs);
 
@@ -54,6 +55,8 @@ namespace libmocap
     LIBMOCAP_ACCESSOR (optional, bool);
 
     virtual std::ostream& print (std::ostream& o) const;
+
+    virtual AbstractMarker* clone () const = 0;
   private:
     int id_;
     std::string name_;

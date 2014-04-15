@@ -76,6 +76,7 @@ namespace libmocap
     };
 
     Segment ();
+    Segment (const Segment&);
     ~Segment ();
     Segment& operator= (const Segment& rhs);
 

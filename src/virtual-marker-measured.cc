@@ -37,6 +37,12 @@ namespace libmocap
       offset_ ()
   {}
 
+  VirtualMarkerMeasured::VirtualMarkerMeasured
+  (const VirtualMarkerMeasured& rhs)
+    : AbstractVirtualMarker (rhs),
+      offset_ (rhs.offset_)
+  {}
+
   VirtualMarkerMeasured::~VirtualMarkerMeasured ()
   {}
 
@@ -45,6 +51,8 @@ namespace libmocap
   {
     if (&rhs == this)
       return *this;
+    AbstractVirtualMarker::operator= (rhs);
+    offset_ = rhs.offset_;
     return *this;
   }
 
@@ -53,6 +61,12 @@ namespace libmocap
   {
     AbstractVirtualMarker::print (stream);
     return stream;
+  }
+
+  AbstractMarker*
+  VirtualMarkerMeasured::clone () const
+  {
+    return new VirtualMarkerMeasured (*this);
   }
 
   std::ostream&

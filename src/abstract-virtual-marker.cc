@@ -38,6 +38,14 @@ namespace libmocap
       planeAxisMarker_ ()
   {}
 
+  AbstractVirtualMarker::AbstractVirtualMarker
+  (const AbstractVirtualMarker& rhs)
+    : AbstractMarker (rhs),
+      originMarker_ (rhs.originMarker_),
+      longAxisMarker_ (rhs.longAxisMarker_),
+      planeAxisMarker_ (rhs.planeAxisMarker_)
+  {}
+
   AbstractVirtualMarker::~AbstractVirtualMarker ()
   {}
 
@@ -46,6 +54,10 @@ namespace libmocap
   {
     if (this == &rhs)
       return *this;
+    AbstractMarker::operator= (rhs);
+    originMarker_ = rhs.originMarker_;
+    longAxisMarker_ = rhs.longAxisMarker_;
+    planeAxisMarker_ = rhs.planeAxisMarker_;
     return *this;
   }
 

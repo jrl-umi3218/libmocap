@@ -43,6 +43,17 @@ namespace libmocap
       extraStretch_ ()
   {}
 
+  Link::Link (const Link& rhs)
+    : name_ (rhs.name_),
+      color_ (rhs.color_),
+      type_ (rhs.type_),
+      marker1_ (rhs.marker1_),
+      marker2_ (rhs.marker2_),
+      minLength_ (rhs.minLength_),
+      maxLength_ (rhs.maxLength_),
+      extraStretch_ (rhs.extraStretch_)
+  {}
+
   Link::~Link ()
   {}
 
@@ -50,6 +61,14 @@ namespace libmocap
   {
     if (&rhs == this)
       return *this;
+    name_ = rhs.name_;
+    color_ = rhs.color_;
+    type_ = rhs.type_;
+    marker1_ = rhs.marker1_;
+    marker2_ = rhs.marker2_;
+    minLength_ = rhs.minLength_;
+    maxLength_ = rhs.maxLength_;
+    extraStretch_ = rhs.extraStretch_;
     return *this;
   }
 

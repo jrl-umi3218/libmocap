@@ -48,6 +48,7 @@ namespace libmocap
       };
 
     Link ();
+    Link (const Link&);
     ~Link ();
     Link& operator= (const Link& rhs);
 

@@ -43,10 +43,10 @@ namespace libmocap
   public:
     LIBMOCAP_ACCESSOR (data, uint32_t);
 
-    uint8_t red ();
-    uint8_t green ();
-    uint8_t blue ();
-    uint8_t alpha ();
+    uint8_t red () const;
+    uint8_t green () const;
+    uint8_t blue () const;
+    uint8_t alpha () const;
 
     std::ostream& print (std::ostream& o) const;
   private:

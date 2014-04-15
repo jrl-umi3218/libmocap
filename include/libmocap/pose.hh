@@ -42,6 +42,7 @@ namespace libmocap
   {
   public:
     Pose ();
+    Pose (const Pose&);
     ~Pose ();
     Pose& operator= (const Pose& rhs);
 

@@ -42,6 +42,16 @@ namespace libmocap
       rotationOffset_ ()
   {}
 
+  Segment::Segment (const Segment& rhs)
+    : id_ (rhs.id_),
+      name_ (rhs.name_),
+      children_ (rhs.children_),
+      originMarker_ (rhs.originMarker_),
+      longAxisMarker_ (rhs.longAxisMarker_),
+      planeAxisMarker_ (rhs.planeAxisMarker_),
+      rotationOffset_ (rhs.rotationOffset_)
+  {}
+
   Segment::~Segment ()
   {}
 
@@ -50,6 +60,13 @@ namespace libmocap
   {
     if (this == &rhs)
       return *this;
+    id_ = rhs.id_;
+    name_ = rhs.name_;
+    children_ = rhs.children_;
+    originMarker_ = rhs.originMarker_;
+    longAxisMarker_ = rhs.longAxisMarker_;
+    planeAxisMarker_ = rhs.planeAxisMarker_;
+    rotationOffset_ = rhs.rotationOffset_;
     return *this;
   }
 

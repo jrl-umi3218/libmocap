@@ -41,6 +41,15 @@ namespace libmocap
       optional_ ()
   {}
 
+  AbstractMarker::AbstractMarker (const AbstractMarker& rhs)
+    : id_ (rhs.id_),
+      name_ (rhs.name_),
+      color_ (rhs.color_),
+      physicalColor_ (rhs.physicalColor_),
+      size_ (rhs.size_),
+      optional_ (rhs.optional_)
+  {}
+
   AbstractMarker::~AbstractMarker ()
   {}
 
@@ -49,6 +58,14 @@ namespace libmocap
   {
     if (this == &rhs)
       return *this;
+
+    id_ = rhs.id_;
+    name_ = rhs.name_;
+    color_ = rhs.color_;
+    physicalColor_ = rhs.physicalColor_;
+    size_ = rhs.size_;
+    optional_ = rhs.optional_;
+
     return *this;
   }
 

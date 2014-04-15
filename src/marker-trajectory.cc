@@ -49,6 +49,21 @@ namespace libmocap
   {
   }
 
+  MarkerTrajectory::MarkerTrajectory (const MarkerTrajectory& rhs)
+    : filename_ (rhs.filename_),
+      dataRate_ (rhs.dataRate_),
+      cameraRate_ (rhs.cameraRate_),
+      numFrames_ (rhs.numFrames_),
+      numMarkers_ (rhs.numMarkers_),
+      units_ (rhs.units_),
+      origDataRate_ (rhs.origDataRate_),
+      origDataStartFrame_ (rhs.origDataStartFrame_),
+      origNumFrames_ (rhs.origNumFrames_),
+      markers_ (rhs.markers_),
+      positions_ (rhs.positions_)
+  {
+  }
+
   MarkerTrajectory::~MarkerTrajectory ()
   {
   }
@@ -58,6 +73,17 @@ namespace libmocap
   {
     if (this == &rhs)
       return *this;
+    filename_ = rhs.filename_;
+    dataRate_ = rhs.dataRate_;
+    cameraRate_ = rhs.cameraRate_;
+    numFrames_ = rhs.numFrames_;
+    numMarkers_ = rhs.numMarkers_;
+    units_ = rhs.units_;
+    origDataRate_ = rhs.origDataRate_;
+    origDataStartFrame_ = rhs.origDataStartFrame_;
+    origNumFrames_ = rhs.origNumFrames_;
+    markers_ = rhs.markers_;
+    positions_ = rhs.positions_;
     return *this;
   }
 

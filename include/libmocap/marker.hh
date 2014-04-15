@@ -40,10 +40,13 @@ namespace libmocap
   {
   public:
     Marker ();
+    Marker (const Marker&);
     ~Marker ();
     Marker& operator= (const Marker& rhs);
 
     std::ostream& print (std::ostream& o) const;
+
+    AbstractMarker* clone () const;
   private:
   };
 

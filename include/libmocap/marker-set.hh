@@ -82,6 +82,7 @@ namespace libmocap
   {
   public:
     MarkerSet ();
+    MarkerSet (const MarkerSet&);
     ~MarkerSet ();
     MarkerSet& operator= (const MarkerSet& rhs);
 
@@ -90,6 +91,8 @@ namespace libmocap
     LIBMOCAP_ACCESSOR (links, std::vector<Link>);
     LIBMOCAP_ACCESSOR (segments, std::vector<Segment>);
     LIBMOCAP_ACCESSOR (poses, std::vector<Pose>);
+
+    const AbstractMarker& markerByName (const std::string name) const;
 
     std::ostream& print (std::ostream& o) const;
   private:

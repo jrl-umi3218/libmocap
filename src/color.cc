@@ -32,10 +32,35 @@
 
 namespace libmocap
 {
+  uint8_t Color::red () const
+  {
+    return (data_ & static_cast<uint8_t> (0xFF000000)) >> 24;
+  }
+
+  uint8_t Color::green () const
+  {
+    return (data_ & static_cast<uint8_t> (0x00FF0000)) >> 16;
+  }
+
+  uint8_t Color::blue () const
+  {
+    return (data_ & static_cast<uint8_t> (0x0000FF00)) >> 8;
+  }
+
+  uint8_t Color::alpha () const
+  {
+    return data_ & static_cast<uint8_t> (0x000000FF);
+  }
+
+
   std::ostream&
   Color::print (std::ostream& stream) const
   {
-    stream << data ();
+    stream
+      << "r: " << static_cast<unsigned int> (red ()) << ", "
+      << "g: " << static_cast<unsigned int> (green ()) << ", "
+      << "b: " << static_cast<unsigned int> (blue ()) << ", "
+      << "a: " << static_cast<unsigned int> (alpha ());
     return stream;
   }
 
