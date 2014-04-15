@@ -12,6 +12,7 @@
 #include <visualization_msgs/MarkerArray.h>
 
 #include "view.hh"
+#include "marker-set-link-view.hh"
 #include "marker-trajectory-view.hh"
 
 namespace libmocap
@@ -23,11 +24,13 @@ namespace libmocap
 		     libmocap::MarkerTrajectory& trajectory,
 		     libmocap::MarkerSet& markerSet)
       : n_ (n),
-	pub_ (n.advertise<visualization_msgs::MarkerArray>("markers", 1, true)),
+	pub_ (n.advertise<visualization_msgs::MarkerArray>
+	      ("markers", 1, true)),
 	msg_ (),
 	views_ ()
     {
       views_.push_back (new MarkerTrajectoryView (trajectory, markerSet));
+      views_.push_back (new MarkerSetLinkView (trajectory, markerSet));
     }
 
     ~MarkerPublisher ()

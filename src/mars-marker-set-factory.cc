@@ -399,8 +399,8 @@ namespace libmocap
 	    std::istringstream ss ((*itLine)[3]);
 	    int marker1, marker2;
 	    ss >> marker1 >> marker2;
-	    linkage.marker1 () = marker1;
-	    linkage.marker2 () = marker2;
+	    linkage.marker1 () = marker1 - 1;
+	    linkage.marker2 () = marker2 - 1;
 	    linkage.minLength () = convert<double> ((*itLine)[4]);
 	    linkage.maxLength () = convert<double> ((*itLine)[5]);
 	    linkage.extraStretch () = convert<double> ((*itLine)[6]);

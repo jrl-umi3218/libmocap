@@ -10,6 +10,7 @@ ADD_REQUIRED_DEPENDENCY(roscpp)
 ADD_EXECUTABLE(ros-viewer
   ros-viewer.cc
 
+  marker-set-link-view.cc
   marker-trajectory-view.cc
   view.cc)
 
