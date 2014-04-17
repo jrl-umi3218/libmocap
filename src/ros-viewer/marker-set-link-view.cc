@@ -89,8 +89,8 @@ namespace libmocap
 
     for (int i = 0; i < static_cast<int> (markerSet_.links ().size ()); ++i)
       {
-	marker1 = markerSet_.links ()[i].marker1 () + 1;
-	marker2 = markerSet_.links ()[i].marker2 () + 1;
+	marker1 = markerSet_.links ()[i].marker1 ();
+	marker2 = markerSet_.links ()[i].marker2 ();
 
 	if (marker1 * 3  + 2 >= static_cast<int> (trajectory_.positions ()[frameId].size ())
 	    || marker2 * 3 + 2 >= static_cast<int> (trajectory_.positions ()[frameId].size ()))

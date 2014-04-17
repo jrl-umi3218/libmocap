@@ -27,6 +27,8 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#include <cstdlib>
+#include <limits>
 #include <iostream>
 #include <libmocap/color.hh>
 
@@ -34,22 +36,22 @@ namespace libmocap
 {
   uint8_t Color::red () const
   {
-    return (data_ & static_cast<uint8_t> (0xFF000000)) >> 24;
+    return static_cast<uint8_t> ((data_ & 0xFF000000) >> 24);
   }
 
   uint8_t Color::green () const
   {
-    return (data_ & static_cast<uint8_t> (0x00FF0000)) >> 16;
+    return static_cast<uint8_t> ((data_ & 0x00FF0000) >> 16);
   }
 
   uint8_t Color::blue () const
   {
-    return (data_ & static_cast<uint8_t> (0x0000FF00)) >> 8;
+    return static_cast<uint8_t> ((data_ & 0x0000FF00) >> 8);
   }
 
   uint8_t Color::alpha () const
   {
-    return data_ & static_cast<uint8_t> (0x000000FF);
+    return static_cast<uint8_t> (data_ & 0x000000FF);
   }
 
 
@@ -62,6 +64,14 @@ namespace libmocap
       << "b: " << static_cast<unsigned int> (blue ()) << ", "
       << "a: " << static_cast<unsigned int> (alpha ());
     return stream;
+  }
+
+  Color randomizeColorRGB ()
+  {
+    Color color;
+    color.data () = rand () % std::numeric_limits<uint32_t>::max ();
+    color.data () |= 0x000000FF;
+    return color;
   }
 
   std::ostream&

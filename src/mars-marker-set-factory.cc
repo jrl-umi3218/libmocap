@@ -143,7 +143,16 @@ namespace libmocap
   };
 
   MarsMarkerSetFactory::MarsMarkerSetFactory ()
-  {}
+    : palette_ ()
+  {
+    // http://www.colourlovers.com/palette/3320274/Paper_Straws
+    palette_.resize (5);
+    palette_[0].data () = 0x467D7700;
+    palette_[1].data () = 0x82924900;
+    palette_[2].data () = 0xEFD07500;
+    palette_[3].data () = 0xF9AECF00;
+    palette_[4].data () = 0xECC6B300;
+  }
 
   MarsMarkerSetFactory::~MarsMarkerSetFactory ()
   {}
@@ -332,9 +341,10 @@ namespace libmocap
 	      {
 		marker->id () = convert<int> ((*itLine)[0]);
 		marker->name () = (*itLine)[1];
-		marker->color ().data () = convert<uint32_t> ((*itLine)[2]);
-		marker->physicalColor ().data () =
-		  convert<uint32_t> ((*itLine)[3]);
+		marker->color () =
+		  getColorFromPalette (convert<std::size_t> ((*itLine)[2]));
+		marker->physicalColor () =
+		  getColorFromPalette (convert<std::size_t> ((*itLine)[3]));
 		marker->size () = convert<double> ((*itLine)[4]);
 		marker->optional () = convert<int> ((*itLine)[5]);;
 		markerSet.markers ().push_back (marker);
@@ -393,7 +403,8 @@ namespace libmocap
 
 	    Link linkage;
 	    linkage.name () = (*itLine)[0];
-	    linkage.color ().data () = convert<uint32_t> ((*itLine)[1]);
+	    linkage.color () =
+	      getColorFromPalette (convert<std::size_t> ((*itLine)[1]));
 	    linkage.type () = Link::LINK_UNKNOWN;
 
 	    std::istringstream ss ((*itLine)[3]);
@@ -510,7 +521,19 @@ namespace libmocap
     markerSet.name () = value;
   }
 
-
+  const Color&
+  MarsMarkerSetFactory::getColorFromPalette (std::size_t id)
+  {
+    if (id >= palette_.size ())
+      {
+	std::size_t oldSize  = palette_.size ();
+	palette_.resize (id + 1);
+	for (id = oldSize; id < palette_.size (); ++id)
+	  palette_[id] = randomizeColorRGB ();
+	return palette_.back ();
+      }
+    return palette_[id];
+  }
 
   bool
   MarsMarkerSetFactory::canLoad (const std::string& filename)

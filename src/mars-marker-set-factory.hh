@@ -32,7 +32,9 @@
 # define LIBMOCAP_MARS_MARKER_SET_FACTORY_HH
 # include <iosfwd>
 # include <string>
+# include <vector>
 
+# include <libmocap/color.hh>
 # include <libmocap/marker-set.hh>
 
 namespace libmocap
@@ -80,6 +82,10 @@ namespace libmocap
 
     // /\}
 
+    const Color& getColorFromPalette (std::size_t id);
+
+  private:
+    std::vector<Color> palette_;
   };
 } // end of namespace libmocap.
 

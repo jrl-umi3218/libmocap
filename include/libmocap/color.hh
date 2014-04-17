@@ -53,6 +53,8 @@ namespace libmocap
     uint32_t data_;
   };
 
+  LIBMOCAP_DLLEXPORT Color randomizeColorRGB ();
+
   LIBMOCAP_DLLEXPORT std::ostream&
   operator<< (std::ostream& o, const Color& color);
 
