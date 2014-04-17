@@ -43,6 +43,7 @@ namespace libmocap
       markerSet_ (markerSet)
   {
     msg_.type = visualization_msgs::Marker::LINE_LIST;
+    msg_.ns = "markers/links";
     msg_.id = 1;
     msg_.scale.x = 0.02;
     msg_.scale.y = 0.02;
