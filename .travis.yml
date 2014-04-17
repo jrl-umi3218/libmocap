@@ -8,6 +8,7 @@ env:
     - APT_DEPENDENCIES="doxygen doxygen-latex cmake"
     - GIT_DEPENDENCIES=""
     - NSIQCPPSTYLE_FILEFILTERPATH=cmake/filefilter.txt
+    - CMAKE_ADDITIONAL_OPTIONS="-DENABLE_ROS_VIEWER=FALSE"
 branches:
   only:
   - master
