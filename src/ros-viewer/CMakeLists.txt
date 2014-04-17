@@ -11,6 +11,7 @@ ADD_EXECUTABLE(ros-viewer
   ros-viewer.cc
 
   marker-set-link-view.cc
+  marker-set-name-view.cc
   marker-trajectory-view.cc
   view.cc)
 

@@ -13,6 +13,7 @@
 
 #include "view.hh"
 #include "marker-set-link-view.hh"
+#include "marker-set-name-view.hh"
 #include "marker-trajectory-view.hh"
 
 namespace libmocap
@@ -31,6 +32,9 @@ namespace libmocap
     {
       views_.push_back (new MarkerTrajectoryView (trajectory, markerSet));
       views_.push_back (new MarkerSetLinkView (trajectory, markerSet));
+
+      for (int i = 0; i < static_cast<int> (markerSet.markers ().size ()); ++i)
+	views_.push_back (new MarkerSetNameView (trajectory, markerSet, i));
     }
 
     ~MarkerPublisher ()
