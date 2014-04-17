@@ -9,6 +9,10 @@ libmocap
 libmocap is a C++ library with no dependencies aiming at Motion
 Capture Data.
 
+libmocap also includes an *optional* ROS viewer relying on ROS and
+ncurses. It can be disabled by setting `ENABLE_ROS_VIEWER` to false.
+
+
 Supported Formats:
 
  - Cortex (Motion Analysis) file formats:
