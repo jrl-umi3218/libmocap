@@ -11,6 +11,8 @@ Capture Data.
 
 libmocap also includes an *optional* ROS viewer relying on ROS and
 ncurses. It can be disabled by setting `ENABLE_ROS_VIEWER` to false.
+When the viewer is running, it streams MarkerArray messages which can
+then be displayed in rviz.
 
 
 Supported Formats:
@@ -22,3 +24,6 @@ Supported Formats:
 
 These loaders have been retro-engineered using the GUI documentation
 and there is no guarantee they will work for any file.
+
+
+![rviz displaying motion capture data](doc/libmocap-viewer.png "rviz displaying motion capture data")
