@@ -36,6 +36,7 @@ namespace libmocap
 {
   std::string extractExtension (const std::string& filename);
   void trimEndOfLine (std::string& s);
+  void trimWhitespace (std::string& s);
 
   template <typename T>
   T convert (const std::string& s)
