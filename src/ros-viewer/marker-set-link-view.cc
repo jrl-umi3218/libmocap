@@ -105,13 +105,13 @@ namespace libmocap
 	    continue;
 	  }
 
-	msg.points[i * 2].x = trajectory_.positions ()[frameId][marker1 * 3 + 0];
-	msg.points[i * 2].y = trajectory_.positions ()[frameId][marker1 * 3 + 1];
-	msg.points[i * 2].z = trajectory_.positions ()[frameId][marker1 * 3 + 2];
+	msg.points[i * 2].x = trajectory_.positions ()[frameId][1 + marker1 * 3 + 0];
+	msg.points[i * 2].y = trajectory_.positions ()[frameId][1 + marker1 * 3 + 1];
+	msg.points[i * 2].z = trajectory_.positions ()[frameId][1 + marker1 * 3 + 2];
 
-	msg.points[i * 2 + 1].x = trajectory_.positions ()[frameId][marker2 * 3 + 0];
-	msg.points[i * 2 + 1].y = trajectory_.positions ()[frameId][marker2 * 3 + 1];
-	msg.points[i * 2 + 1].z = trajectory_.positions ()[frameId][marker2 * 3 + 2];
+	msg.points[i * 2 + 1].x = trajectory_.positions ()[frameId][1 + marker2 * 3 + 0];
+	msg.points[i * 2 + 1].y = trajectory_.positions ()[frameId][1 + marker2 * 3 + 1];
+	msg.points[i * 2 + 1].z = trajectory_.positions ()[frameId][1 + marker2 * 3 + 2];
       }
     ++msg.header.seq;
     msg.header.stamp = ros::Time::now ();
