@@ -135,6 +135,7 @@ int mainSafe (int argc, char* argv[])
   nodelay (stdscr, TRUE);
 
   int row, col;
+  int oldrow, oldcol;
   std::string mesg1 = "ROS Motion Capture Data Player";
   std::string mesg2;
   std::string mesg3;
@@ -162,8 +163,19 @@ int mainSafe (int argc, char* argv[])
       else if (ch == ' ')
 	play = !play;
 
-      clear ();
+      oldrow = row, oldcol = col;
       getmaxyx (stdscr, row, col);
+      if (oldrow != row || oldcol != col)
+	clear ();
+      else
+	{
+	  move (row / 2 - 1, 0);
+	  clrtoeol ();
+	  move (row / 2, 0);
+	  clrtoeol ();
+	  move (row / 2 + 1, 0);
+	  clrtoeol ();
+	}
 
       std::stringstream stream;
       stream
