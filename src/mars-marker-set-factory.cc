@@ -341,6 +341,7 @@ namespace libmocap
 	      {
 		marker->id () = convert<int> ((*itLine)[0]);
 		marker->name () = (*itLine)[1];
+		trimWhitespace (marker->name ());
 		marker->color () =
 		  getColorFromPalette (convert<std::size_t> ((*itLine)[2]));
 		marker->physicalColor () =
@@ -403,6 +404,7 @@ namespace libmocap
 
 	    Link linkage;
 	    linkage.name () = (*itLine)[0];
+	    trimWhitespace (linkage.name ());
 	    linkage.color () =
 	      getColorFromPalette (convert<std::size_t> ((*itLine)[1]));
 	    linkage.type () = Link::LINK_UNKNOWN;
