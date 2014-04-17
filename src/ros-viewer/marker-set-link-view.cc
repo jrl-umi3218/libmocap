@@ -48,24 +48,8 @@ namespace libmocap
     msg_.scale.x = 0.02;
     msg_.scale.y = 0.02;
     msg_.scale.z = 0.02;
-
-
     msg_.points.resize (markerSet.links ().size () * 2);
-
     msg_.colors.resize (markerSet.links ().size () * 2);
-    std::string markerLabel;
-    for (int i = 0; i < static_cast<int> (markerSet.links ().size ()); ++i)
-      {
-	msg_.colors[i * 2].r = static_cast<float> (markerSet.links ()[i].color ().red () / 256.);
-	msg_.colors[i * 2].g = static_cast<float> (markerSet.links ()[i].color ().green () / 256.);
-	msg_.colors[i * 2].b = static_cast<float> (markerSet.links ()[i].color ().blue () / 256.);
-	msg_.colors[i * 2].a = 1.;
-
-	msg_.colors[i * 2 + 1].r = msg_.colors[i * 2].r;
-	msg_.colors[i * 2 + 1].g = msg_.colors[i * 2].g;
-	msg_.colors[i * 2 + 1].b = msg_.colors[i * 2].b;
-	msg_.colors[i * 2 + 1].a = msg_.colors[i * 2].a;
-      }
   }
 
   MarkerSetLinkView::~MarkerSetLinkView ()
@@ -92,6 +76,7 @@ namespace libmocap
       }
 
     msg.points.resize (markerSet_.links ().size () * 2);
+    msg.colors.resize (markerSet_.links ().size () * 2);
     for (int i = 0; i < static_cast<int> (markerSet_.links ().size ()); ++i)
       {
 	marker1 = markerSet_.links ()[i].marker1 ();
@@ -119,6 +104,18 @@ namespace libmocap
 	msg.points[id + 1].y = trajectory_.positions ()[frameId][1 + marker2 * 3 + 1];
 	msg.points[id + 1].z = trajectory_.positions ()[frameId][1 + marker2 * 3 + 2];
 
+	msg.colors[id].r =
+	  static_cast<float> (markerSet_.links ()[i].color ().red () / 256.);
+	msg.colors[id].g =
+	  static_cast<float> (markerSet_.links ()[i].color ().green () / 256.);
+	msg.colors[id].b =
+	  static_cast<float> (markerSet_.links ()[i].color ().blue () / 256.);
+	msg.colors[id].a = 1.;
+	msg.colors[id + 1].r = msg.colors[id].r;
+	msg.colors[id + 1].g = msg.colors[id].g;
+	msg.colors[id + 1].b = msg.colors[id].b;
+	msg.colors[id + 1].a = msg.colors[id].a;
+
 	if (std::isnan (msg.points[id].x)
 	    || std::isnan (msg.points[id].y)
 	    || std::isnan (msg.points[id].z)
@@ -132,6 +129,7 @@ namespace libmocap
 	  }
       }
     msg.points.resize ((markerSet_.links ().size () - missingData) * 2);
+    msg.colors.resize ((markerSet_.links ().size () - missingData) * 2);
 
     ++msg.header.seq;
     msg.header.stamp = ros::Time::now ();

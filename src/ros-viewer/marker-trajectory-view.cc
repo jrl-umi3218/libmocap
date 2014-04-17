@@ -37,10 +37,10 @@ namespace libmocap
 {
   static void setDefaultColor (std_msgs::ColorRGBA& color)
   {
-    color.r = static_cast<float> ((rand () % 256) / 256.);
-    color.g = static_cast<float> ((rand () % 256) / 256.);
-    color.b = static_cast<float> ((rand () % 256) / 256.);
-    color.a = 1.;
+    color.r = 0.1f;
+    color.g = 0.9f;
+    color.b = 0.1f;
+    color.a = 1.0f;
   }
 
   MarkerTrajectoryView::MarkerTrajectoryView
@@ -51,34 +51,7 @@ namespace libmocap
       markerSet_ (markerSet)
   {
     msg_.points.resize (trajectory.numMarkers ());
-
     msg_.colors.resize (trajectory.numMarkers ());
-    std::string markerLabel;
-    for (int i = 0; i < trajectory.numMarkers (); ++i)
-      {
-	if (i >= static_cast<int> (trajectory.markers ().size ()))
-	  {
-	    setDefaultColor (msg_.colors[i]);
-	    continue;
-	  }
-	markerLabel = trajectory.markers ()[i];
-	try
-	  {
-	    const AbstractMarker& marker = markerSet.markerByName (markerLabel);
-	    msg_.colors[i].r = static_cast<float> (marker.color ().red () / 256.);
-	    msg_.colors[i].g = static_cast<float> (marker.color ().green () / 256.);
-	    msg_.colors[i].b = static_cast<float> (marker.color ().blue () / 256.);
-	    msg_.colors[i].a = 1.;
-	  }
-	catch (const std::exception& e)
-	  {
-	    std::string error =
-	      "failed to find marker `" + markerLabel + "', using random color instead";
-	    std::cerr << error << std::endl;
-	    setDefaultColor (msg_.colors[i]);
-	  }
-
-      }
   }
 
   MarkerTrajectoryView::~MarkerTrajectoryView ()
@@ -88,6 +61,7 @@ namespace libmocap
   MarkerTrajectoryView::updateMessage (int frameId, visualization_msgs::Marker& msg)
   {
     int offset = 1;
+    std::string markerLabel;
 
     msg_.action = visualization_msgs::Marker::ADD;
 
@@ -104,6 +78,7 @@ namespace libmocap
 
     int missingData = 0;
     msg.points.resize (markerSet_.markers ().size ());
+    msg.colors.resize (trajectory_.numMarkers ());
     for (int i = 0; i < trajectory_.numMarkers (); ++i)
       {
 	if (offset + i * 3 + 2
@@ -124,6 +99,28 @@ namespace libmocap
 	msg.points[id].y = trajectory_.positions ()[frameId][offset + i * 3 + 1];
 	msg.points[id].z = trajectory_.positions ()[frameId][offset + i * 3 + 2];
 
+	if (i >= static_cast<int> (trajectory_.markers ().size ()))
+	  setDefaultColor (msg.colors[i]);
+	else
+	  {
+	    markerLabel = trajectory_.markers ()[i];
+	    try
+	      {
+		const AbstractMarker& marker = markerSet_.markerByName (markerLabel);
+		msg.colors[id].r = static_cast<float> (marker.color ().red () / 256.);
+		msg.colors[id].g = static_cast<float> (marker.color ().green () / 256.);
+		msg.colors[id].b = static_cast<float> (marker.color ().blue () / 256.);
+		msg.colors[id].a = 1.;
+	      }
+	    catch (const std::exception& e)
+	      {
+		std::string error =
+		  "failed to find marker `" + markerLabel + "', using random color instead";
+		std::cerr << error << std::endl;
+		setDefaultColor (msg.colors[i]);
+	      }
+	  }
+
 	if (std::isnan (msg.points[id].x)
 	    || std::isnan (msg.points[id].y)
 	    || std::isnan (msg.points[id].z))
@@ -133,6 +130,7 @@ namespace libmocap
 	  }
       }
     msg.points.resize (markerSet_.markers ().size () - missingData);
+    msg.colors.resize (markerSet_.markers ().size () - missingData);
     ++msg.header.seq;
     msg.header.stamp = ros::Time::now ();
   }
