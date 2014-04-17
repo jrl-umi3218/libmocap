@@ -183,8 +183,22 @@ namespace libmocap
     std::string line;
     int frameId;
 
-    // Discard TRC header.
+    // Read columns
     std::getline (file, line);
+
+    std::istringstream stream (line);
+    std::string value;
+    stream >> value;
+    if (value != "Frame#")
+      throw std::runtime_error ("failed to read columns titles");
+    stream >> value;
+    if (value != "Time")
+      throw std::runtime_error ("failed to read columns titles");
+    while (stream >> value)
+      trajectory.markers ().push_back (value);
+
+    // The other two lines are discarded as they contain no
+    // interesting information.
     std::getline (file, line);
     std::getline (file, line);
 
