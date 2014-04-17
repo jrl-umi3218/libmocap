@@ -51,6 +51,10 @@ ENDIF()
 # Add main library to pkg-config file.
 PKG_CONFIG_APPEND_LIBS(mocap)
 
+# Should we compile the viewer?
+# If yes, ncurses and ROS are required.
+OPTION(ENABLE_ROS_VIEWER "If false, ros-viewer is built (ROS and ncurses required)" TRUE)
+
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(tests)
 
