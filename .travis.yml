@@ -1,0 +1,22 @@
+language: cpp
+compiler:
+  - gcc
+  - clang
+env:
+  global:
+    - secure: "gDPIeYEVID1EEaLS6PKaFSwkLVU7RzHzzeRADwiGSABqJHsItmgYtrb+FCO1BOvQ4cp4cP/jdFFAW3BagJYO089qzthBj8bNXFRyCbjiuhFYMkdGjVvBf8yVUYmsVUQwdpGm715bxA7HJzkGmndWKBBpKrAom9p3+awzv2e19Lg="
+    - APT_DEPENDENCIES="doxygen doxygen-latex cmake"
+    - GIT_DEPENDENCIES=""
+    - NSIQCPPSTYLE_FILEFILTERPATH=cmake/filefilter.txt
+branches:
+  only:
+  - master
+script: ./.travis/run build
+after_success: ./.travis/run after_success
+after_failure: ./.travis/run after_failure
+before_install:
+  - ./.travis/run  before_install
+  - ./.travis/dependencies/eigen-3.2.0
+matrix:
+  allow_failures:
+    - compiler: clang
