@@ -76,6 +76,9 @@ namespace libmocap
   {
     int marker1;
     int marker2;
+    int missingData = 0;
+
+    msg_.action = visualization_msgs::Marker::ADD;
 
     if (frameId >= static_cast<int> (trajectory_.positions ().size ()))
       {
@@ -88,6 +91,7 @@ namespace libmocap
 	return;
       }
 
+    msg.points.resize (markerSet_.links ().size () * 2);
     for (int i = 0; i < static_cast<int> (markerSet_.links ().size ()); ++i)
       {
 	marker1 = markerSet_.links ()[i].marker1 ();
@@ -106,14 +110,29 @@ namespace libmocap
 	    continue;
 	  }
 
-	msg.points[i * 2].x = trajectory_.positions ()[frameId][1 + marker1 * 3 + 0];
-	msg.points[i * 2].y = trajectory_.positions ()[frameId][1 + marker1 * 3 + 1];
-	msg.points[i * 2].z = trajectory_.positions ()[frameId][1 + marker1 * 3 + 2];
+	int id = (i - missingData) * 2;
+	msg.points[id].x = trajectory_.positions ()[frameId][1 + marker1 * 3 + 0];
+	msg.points[id].y = trajectory_.positions ()[frameId][1 + marker1 * 3 + 1];
+	msg.points[id].z = trajectory_.positions ()[frameId][1 + marker1 * 3 + 2];
 
-	msg.points[i * 2 + 1].x = trajectory_.positions ()[frameId][1 + marker2 * 3 + 0];
-	msg.points[i * 2 + 1].y = trajectory_.positions ()[frameId][1 + marker2 * 3 + 1];
-	msg.points[i * 2 + 1].z = trajectory_.positions ()[frameId][1 + marker2 * 3 + 2];
+	msg.points[id + 1].x = trajectory_.positions ()[frameId][1 + marker2 * 3 + 0];
+	msg.points[id + 1].y = trajectory_.positions ()[frameId][1 + marker2 * 3 + 1];
+	msg.points[id + 1].z = trajectory_.positions ()[frameId][1 + marker2 * 3 + 2];
+
+	if (std::isnan (msg.points[id].x)
+	    || std::isnan (msg.points[id].y)
+	    || std::isnan (msg.points[id].z)
+	    || std::isnan (msg.points[id + 1].x)
+	    || std::isnan (msg.points[id + 1].y)
+	    || std::isnan (msg.points[id + 1].z))
+	  {
+	    msg.points[id].x = msg.points[id].y = msg.points[id].z = 0.;
+	    msg.points[id + 1].x = msg.points[id + 1].y = msg.points[id + 1].z = 0.;
+	    missingData++;
+	  }
       }
+    msg.points.resize ((markerSet_.links ().size () - missingData) * 2);
+
     ++msg.header.seq;
     msg.header.stamp = ros::Time::now ();
   }

@@ -88,6 +88,9 @@ namespace libmocap
   MarkerTrajectoryView::updateMessage (int frameId, visualization_msgs::Marker& msg)
   {
     int offset = 1;
+
+    msg_.action = visualization_msgs::Marker::ADD;
+
     if (frameId >= static_cast<int> (trajectory_.positions ().size ()))
       {
 	std::cerr << "size mismatch (trajectory)" << std::endl;
@@ -98,6 +101,9 @@ namespace libmocap
 	std::cerr << "size mismatch (frame in trajectory)" << std::endl;
 	return;
       }
+
+    int missingData = 0;
+    msg.points.resize (markerSet_.markers ().size ());
     for (int i = 0; i < trajectory_.numMarkers (); ++i)
       {
 	if (offset + i * 3 + 2
@@ -112,10 +118,21 @@ namespace libmocap
 	    std::cerr << stream.str () << std::endl;
 	    continue;
 	  }
-	msg.points[i].x = trajectory_.positions ()[frameId][offset + i * 3 + 0];
-	msg.points[i].y = trajectory_.positions ()[frameId][offset + i * 3 + 1];
-	msg.points[i].z = trajectory_.positions ()[frameId][offset + i * 3 + 2];
+
+	int id = i - missingData;
+	msg.points[id].x = trajectory_.positions ()[frameId][offset + i * 3 + 0];
+	msg.points[id].y = trajectory_.positions ()[frameId][offset + i * 3 + 1];
+	msg.points[id].z = trajectory_.positions ()[frameId][offset + i * 3 + 2];
+
+	if (std::isnan (msg.points[id].x)
+	    || std::isnan (msg.points[id].y)
+	    || std::isnan (msg.points[id].z))
+	  {
+	    msg.points[id].x = msg.points[id].y = msg.points[id].z = 0.;
+	    missingData++;
+	  }
       }
+    msg.points.resize (markerSet_.markers ().size () - missingData);
     ++msg.header.seq;
     msg.header.stamp = ros::Time::now ();
   }

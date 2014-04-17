@@ -63,6 +63,8 @@ namespace libmocap
   void
   MarkerSetNameView::updateMessage (int frameId, visualization_msgs::Marker& msg)
   {
+    msg_.action = visualization_msgs::Marker::ADD;
+
     if (frameId >= static_cast<int> (trajectory_.positions ().size ()))
       {
 	std::cerr << "size mismatch (trajectory)" << std::endl;
@@ -88,6 +90,14 @@ namespace libmocap
     msg.pose.position.x = trajectory_.positions ()[frameId][1 + id_ * 3 + 0] + .5 * msg_.scale.z;
     msg.pose.position.y = trajectory_.positions ()[frameId][1 + id_ * 3 + 1] + .5 * msg_.scale.z;
     msg.pose.position.z = trajectory_.positions ()[frameId][1 + id_ * 3 + 2] + .5 * msg_.scale.z;
+
+    if (std::isnan (msg.pose.position.x)
+	|| std::isnan (msg.pose.position.y)
+	|| std::isnan (msg.pose.position.z))
+      {
+	msg.pose.position.x = msg.pose.position.y = msg.pose.position.z = 0.;
+	msg_.action = visualization_msgs::Marker::DELETE;
+      }
     ++msg.header.seq;
     msg.header.stamp = ros::Time::now ();
   }

@@ -27,6 +27,8 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#include <cmath>
+
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -167,11 +169,18 @@ namespace libmocap
       }
   }
 
+  static bool isBlank (char c)
+  {
+    return c == ' '
+      || c == '\t'
+      || c == '\r'
+      || c == '\b';
+  }
+
   void
   TrcMarkerTrajectoryFactory::loadData (std::ifstream& file, MarkerTrajectory& trajectory)
   {
     std::string line;
-    std::string value;
     int frameId;
 
     // Discard TRC header.
@@ -200,9 +209,33 @@ namespace libmocap
 	      throw;
 	  }
 	trimEndOfLine (line);
-	std::istringstream stream (line);
-	stream >> value;
-	frameId = convert<int> (value) - 1;
+
+	int start = 0;
+	int end = 0;
+
+	std::vector<std::string> data;
+	while (start < static_cast<int> (line.size ())
+	       && end < static_cast<int> (line.size ()))
+	  {
+	    if (isBlank (line[start]))
+	      start++;
+
+	    // no more to read
+	    if (start >= static_cast<int> (line.size ()))
+	      break;
+
+	    end = start;
+	    while (!isBlank (line[end]))
+	      end++;
+	    data.push_back (line.substr (start, end - start));
+	    start = end;
+	  }
+
+	// skip empty lines
+	if (data.empty ())
+	  continue;
+
+	frameId = convert<int> (data[0]) - 1;
 	if (frameId < 0
 	    || frameId >= static_cast<int> (trajectory.positions ().size ()))
 	  {
@@ -216,7 +249,8 @@ namespace libmocap
 	  }
 
 	int markerId = 0;
-	while (stream >> value)
+	std::vector<std::string>::const_iterator it = data.begin ();
+	for (++it; it != data.end (); ++it)
 	  {
 	    if (markerId >= 1 + trajectory.numMarkers () * 3)
 	      {
@@ -230,7 +264,10 @@ namespace libmocap
 		std::cerr << stream.str () << std::endl;
 		continue;
 	      }
-	    trajectory.positions ()[frameId][markerId++] = convert<double> (value);
+	    if (it->empty ())
+	      trajectory.positions ()[frameId][markerId++] = nan ("");
+	    else
+	      trajectory.positions ()[frameId][markerId++] = convert<double> (*it);
 	  }
 	if (markerId != 1 + trajectory.numMarkers () * 3)
 	  {
