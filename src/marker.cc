@@ -27,8 +27,10 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#include <stdexcept>
 #include <libmocap/abstract-marker.hh>
 #include <libmocap/marker.hh>
+#include <libmocap/marker-trajectory.hh>
 
 namespace libmocap
 {
@@ -63,6 +65,26 @@ namespace libmocap
   Marker::clone () const
   {
     return new Marker (*this);
+  }
+
+  void
+  Marker::position
+  (double position[3],
+   const MarkerSet&,
+   const MarkerTrajectory& trajectory,
+   int frameId) const
+  {
+    if (frameId < 0)
+      throw std::runtime_error ("negative frame id");
+    if (frameId >= static_cast<int> (trajectory.positions ().size ()))
+      throw std::runtime_error ("frame id is too large");
+    if (id () < 0
+	|| id () >= static_cast<int> (trajectory.positions ()[frameId].size ()))
+      throw std::runtime_error ("marker id is inconsistent");
+
+    position[0] = trajectory.positions ()[frameId][1 + id () * 3 + 0];
+    position[1] = trajectory.positions ()[frameId][1 + id () * 3 + 1];
+    position[2] = trajectory.positions ()[frameId][1 + id () * 3 + 2];
   }
 
   std::ostream&

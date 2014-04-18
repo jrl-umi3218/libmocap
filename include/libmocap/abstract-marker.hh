@@ -39,6 +39,9 @@
 
 namespace libmocap
 {
+  class MarkerSet;
+  class MarkerTrajectory;
+
   class LIBMOCAP_DLLEXPORT AbstractMarker
   {
   public:
@@ -57,6 +60,13 @@ namespace libmocap
     virtual std::ostream& print (std::ostream& o) const;
 
     virtual AbstractMarker* clone () const = 0;
+
+    virtual void position
+      (double position[3],
+       const MarkerSet& markerSet,
+       const MarkerTrajectory& trajectory,
+       int frameId) const = 0;
+
   private:
     int id_;
     std::string name_;

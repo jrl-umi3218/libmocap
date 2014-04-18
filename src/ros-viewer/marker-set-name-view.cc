@@ -76,7 +76,7 @@ namespace libmocap
 	return;
       }
 
-    if (id_ * 3  + 2 >= static_cast<int> (trajectory_.positions ()[frameId].size ()))
+    if (id_ >= static_cast<int> (markerSet_.markers ().size ()))
       {
 	std::stringstream stream;
 	stream
@@ -86,10 +86,19 @@ namespace libmocap
 	std::cerr << stream.str () << std::endl;
 	return;
       }
+    if (!markerSet_.markers ()[id_])
+      {
+	std::cerr << "null marker in marker set" << std::endl;
+	return;
+      }
 
-    msg.pose.position.x = trajectory_.positions ()[frameId][1 + id_ * 3 + 0] + .5 * msg_.scale.z;
-    msg.pose.position.y = trajectory_.positions ()[frameId][1 + id_ * 3 + 1] + .5 * msg_.scale.z;
-    msg.pose.position.z = trajectory_.positions ()[frameId][1 + id_ * 3 + 2] + .5 * msg_.scale.z;
+    double position[3];
+    markerSet_.markers ()[id_]->position
+      (position, markerSet_, trajectory_, frameId);
+
+    msg.pose.position.x = position[0] + .5 * msg_.scale.z;
+    msg.pose.position.y = position[1] + .5 * msg_.scale.z;
+    msg.pose.position.z = position[2] + .5 * msg_.scale.z;
 
     if (std::isnan (msg.pose.position.x)
 	|| std::isnan (msg.pose.position.y)

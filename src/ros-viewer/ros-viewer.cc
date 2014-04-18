@@ -90,16 +90,15 @@ std::string makeProgressBar (int frameId, int nFrames, int len)
 
 int mainSafe (int argc, char* argv[])
 {
-  if (argc != 2 && argc != 3)
+  if (argc != 3)
     {
       std::cout <<
 	"usage: ros-viewer TRC_FILE [MARS_FILE]\n"
 	"\n"
-	"TRC_FILE must be a valid TRC files\n"
+	"TRC_FILE must be a valid TRC file\n"
 	"i.e. a file containing markers trajectories\n"
 	"\n"
-	"an optional marker set file (MARS_FILE)\n"
-	"can be given to enhance data display\n"
+	"MARS_FILE must be a valid marker set file\n"
 	;
       return 1;
     }
@@ -109,13 +108,9 @@ int mainSafe (int argc, char* argv[])
   libmocap::MarkerTrajectory trajectory = factory.load (filename);
   trajectory.normalize ();
 
-  libmocap::MarkerSet markerSet;
-  if (argc == 3)
-    {
-      std::string filenameMars = argv[2];
-      libmocap::MarkerSetFactory factoryMarkerSet;
-      markerSet = factoryMarkerSet.load (filenameMars);
-    }
+  std::string filenameMars = argv[2];
+  libmocap::MarkerSetFactory factoryMarkerSet;
+  libmocap::MarkerSet markerSet = factoryMarkerSet.load (filenameMars);
 
   ros::init (argc, argv, "libmocap");
   ros::NodeHandle n;

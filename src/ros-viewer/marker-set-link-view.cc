@@ -82,8 +82,8 @@ namespace libmocap
 	marker1 = markerSet_.links ()[i].marker1 ();
 	marker2 = markerSet_.links ()[i].marker2 ();
 
-	if (marker1 * 3  + 2 >= static_cast<int> (trajectory_.positions ()[frameId].size ())
-	    || marker2 * 3 + 2 >= static_cast<int> (trajectory_.positions ()[frameId].size ()))
+	if (marker1 >= static_cast<int> (markerSet_.markers ().size ())
+	    || marker2 >= static_cast<int> (markerSet_.markers ().size ()))
 	  {
 	    std::stringstream stream;
 	    stream
@@ -95,14 +95,21 @@ namespace libmocap
 	    continue;
 	  }
 
-	int id = (i - missingData) * 2;
-	msg.points[id].x = trajectory_.positions ()[frameId][1 + marker1 * 3 + 0];
-	msg.points[id].y = trajectory_.positions ()[frameId][1 + marker1 * 3 + 1];
-	msg.points[id].z = trajectory_.positions ()[frameId][1 + marker1 * 3 + 2];
+	double position1[3];
+	double position2[3];
+	markerSet_.markers ()[marker1]->position
+	  (position1, markerSet_, trajectory_, frameId);
+	markerSet_.markers ()[marker2]->position
+	  (position2, markerSet_, trajectory_, frameId);
 
-	msg.points[id + 1].x = trajectory_.positions ()[frameId][1 + marker2 * 3 + 0];
-	msg.points[id + 1].y = trajectory_.positions ()[frameId][1 + marker2 * 3 + 1];
-	msg.points[id + 1].z = trajectory_.positions ()[frameId][1 + marker2 * 3 + 2];
+	int id = (i - missingData) * 2;
+	msg.points[id].x = position1[0];
+	msg.points[id].y = position1[1];
+	msg.points[id].z = position1[2];
+
+	msg.points[id + 1].x = position2[0];
+	msg.points[id + 1].y = position2[1];
+	msg.points[id + 1].z = position2[2];
 
 	msg.colors[id].r =
 	  static_cast<float> (markerSet_.links ()[i].color ().red () / 256.);

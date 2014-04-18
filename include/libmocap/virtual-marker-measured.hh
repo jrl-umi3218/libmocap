@@ -52,6 +52,13 @@ namespace libmocap
     std::ostream& print (std::ostream& o) const;
 
     AbstractMarker* clone () const;
+
+    void position
+      (double position[3],
+       const MarkerSet& markerSet,
+       const MarkerTrajectory& trajectory,
+       int frameId) const;
+
   private:
     std::vector<double> offset_;
   };

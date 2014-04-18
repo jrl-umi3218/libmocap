@@ -67,10 +67,12 @@ namespace libmocap
     void loadVMJoinDefs (MarkerSet& markerSet, std::ifstream& file);
     void loadLinkages (MarkerSet& markerSet, std::ifstream& file);
     void loadSkeletonType (MarkerSet& markerSet, std::ifstream& file);
+    void loadCalciumModel (MarkerSet& markerSet, std::ifstream& file);
     void loadHtrExportOptions (MarkerSet& markerSet, std::ifstream& file);
     void loadSegments (MarkerSet& markerSet, std::ifstream& file);
     void loadModelPose (MarkerSet& markerSet, std::ifstream& file);
     void loadPersonalInfo (MarkerSet& markerSet, std::ifstream& file);
+    void loadMassModel (MarkerSet& markerSet, std::ifstream& file);
 
     /// \}
 

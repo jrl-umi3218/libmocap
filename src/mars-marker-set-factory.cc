@@ -36,8 +36,11 @@
 #include <iostream>
 #include <stdexcept>
 
+#include <libmocap/abstract-virtual-marker.hh>
 #include <libmocap/link.hh>
 #include <libmocap/marker.hh>
+#include <libmocap/virtual-marker-measured.hh>
+#include <libmocap/virtual-marker-ratio.hh>
 
 #include "mars-marker-set-factory.hh"
 #include "string.hh"
@@ -64,10 +67,12 @@ namespace libmocap
     {"VMJoinDefs", &MarsMarkerSetFactory::loadVMJoinDefs},
     {"Linkages", &MarsMarkerSetFactory::loadLinkages},
     {"SkeletonType", &MarsMarkerSetFactory::loadSkeletonType},
+    {"CalciumModel", &MarsMarkerSetFactory::loadCalciumModel},
     {"HtrExportOptions", &MarsMarkerSetFactory::loadHtrExportOptions},
     {"Segments", &MarsMarkerSetFactory::loadSegments},
     {"ModelPose", &MarsMarkerSetFactory::loadModelPose},
     {"Personal Info", &MarsMarkerSetFactory::loadPersonalInfo},
+    {"Mass Model", &MarsMarkerSetFactory::loadMassModel},
     {0, 0},
   };
 
@@ -141,6 +146,26 @@ namespace libmocap
     {"Weight", 0},
     {0, 0},
   };
+
+  static const VariableMapper massModelVariableMapper[] = {
+    {"Description", 0},
+    {"Type", 0},
+    {"Gender", 0},
+    {"Comment", 0},
+    {"NumberOfSegments", 0},
+    {0, 0},
+  };
+
+  enum MarsMarkerTypes
+    {
+      TWO_POINTS_RATIO = 2,
+      TWO_POINTS_MEASURED = 3,
+      THREE_POINTS_RATIO = 4,
+      THREE_POINTS_MEASURED = 5,
+      EMR_MARKER = 6,
+      ONE_POINTER_MEASURED = 7,
+      RELATIVE_TO_BONE = 8
+    };
 
   MarsMarkerSetFactory::MarsMarkerSetFactory ()
     : palette_ ()
@@ -315,7 +340,7 @@ namespace libmocap
   {
     try
       {
-	loadSection (markersVariableMapper, markerSet, file);
+	loadSection (virtualMarkersVariableMapper, markerSet, file);
       }
     catch (const std::runtime_error&)
       {
@@ -339,7 +364,7 @@ namespace libmocap
 	    Marker* marker = new Marker ();
 	    try
 	      {
-		marker->id () = convert<int> ((*itLine)[0]);
+		marker->id () = convert<int> ((*itLine)[0]) - 1;
 		marker->name () = (*itLine)[1];
 		trimWhitespace (marker->name ());
 		marker->color () =
@@ -366,23 +391,9 @@ namespace libmocap
   MarsMarkerSetFactory::loadVirtualMarkers
   (MarkerSet& markerSet, std::ifstream& file)
   {
-    loadSection (virtualMarkersVariableMapper, markerSet, file);
-  }
-
-  void
-  MarsMarkerSetFactory::loadVMJoinDefs
-  (MarkerSet& markerSet, std::ifstream& file)
-  {
-    loadSection (VMJoinDefsVariableMapper, markerSet, file);
-  }
-
-  void
-  MarsMarkerSetFactory::loadLinkages
-  (MarkerSet& markerSet, std::ifstream& file)
-  {
     try
       {
-	loadSection (linkagesVariableMapper, markerSet, file);
+	loadSection (markersVariableMapper, markerSet, file);
       }
     catch (const std::runtime_error&)
       {
@@ -392,59 +403,256 @@ namespace libmocap
 	std::vector<std::vector<std::string> >::const_iterator itLine;
 	for (itLine = values.begin (); itLine != values.end (); ++itLine)
 	  {
-	    if (itLine->size () != 7)
+	    if (itLine->size () != 10)
 	      {
 		std::ostringstream error;
 		error
-		  << "unexpected length in linkage data"
-		  " 8 was expected but length is "
+		  << "unexpected length in virtual marker data"
+		  " (10 was expected but length is "
 		  << itLine->size () << ")";
 		throw std::runtime_error (error.str ());
 	      }
 
-	    Link linkage;
-	    linkage.name () = (*itLine)[0];
-	    trimWhitespace (linkage.name ());
-	    linkage.color () =
-	      getColorFromPalette (convert<std::size_t> ((*itLine)[1]));
-	    linkage.type () = Link::LINK_UNKNOWN;
+	    int markerType = convert<int> ((*itLine)[2]);
+	    AbstractVirtualMarker* marker;
+	    switch (markerType)
+	      {
+	      case TWO_POINTS_RATIO:
+		{
+		  VirtualMarkerRatio* virtualMarkerRatio =
+		    new VirtualMarkerRatio ();
+		  virtualMarkerRatio->weights ().resize (2);
+		  virtualMarkerRatio->weights ()[0] =
+		    convert<double> ((*itLine)[6]);
+		  virtualMarkerRatio->weights ()[1] =
+		    convert<double> ((*itLine)[7]);
+		  virtualMarkerRatio->weights ()[2] =
+		    convert<double> ((*itLine)[8]);
+		  marker = virtualMarkerRatio;
+		  break;
+		}
 
-	    std::istringstream ss ((*itLine)[3]);
-	    int marker1, marker2;
-	    ss >> marker1 >> marker2;
-	    linkage.marker1 () = marker1 - 1;
-	    linkage.marker2 () = marker2 - 1;
-	    linkage.minLength () = convert<double> ((*itLine)[4]);
-	    linkage.maxLength () = convert<double> ((*itLine)[5]);
-	    linkage.extraStretch () = convert<double> ((*itLine)[6]);
-	    markerSet.links ().push_back (linkage);
+	      case THREE_POINTS_RATIO:
+		{
+		  VirtualMarkerRatio* virtualMarkerRatio =
+		    new VirtualMarkerRatio ();
+		  virtualMarkerRatio->weights ().resize (3);
+		  virtualMarkerRatio->weights ()[0] =
+		    convert<double> ((*itLine)[6]);
+		  virtualMarkerRatio->weights ()[1] =
+		    convert<double> ((*itLine)[7]);
+		  virtualMarkerRatio->weights ()[2] =
+		    convert<double> ((*itLine)[8]);
+		  marker = virtualMarkerRatio;
+		  break;
+		}
+
+	      case TWO_POINTS_MEASURED:
+		{
+		  VirtualMarkerMeasured* virtualMarkerMeasured =
+		    new VirtualMarkerMeasured ();
+		  virtualMarkerMeasured->offset ().resize (2);
+		  virtualMarkerMeasured->offset ()[0] =
+		    convert<double> ((*itLine)[6]);
+		  virtualMarkerMeasured->offset ()[1] =
+		    convert<double> ((*itLine)[7]);
+		  virtualMarkerMeasured->offset ()[2] =
+		    convert<double> ((*itLine)[8]);
+		  marker = virtualMarkerMeasured;
+		  break;
+		}
+	      case THREE_POINTS_MEASURED:
+		{
+		  VirtualMarkerMeasured* virtualMarkerMeasured =
+		    new VirtualMarkerMeasured ();
+		  virtualMarkerMeasured->offset ().resize (3);
+		  virtualMarkerMeasured->offset ()[0] =
+		    convert<double> ((*itLine)[6]);
+		  virtualMarkerMeasured->offset ()[1] =
+		    convert<double> ((*itLine)[7]);
+		  virtualMarkerMeasured->offset ()[2] =
+		    convert<double> ((*itLine)[8]);
+		  marker = virtualMarkerMeasured;
+		  break;
+		}
+
+	      case ONE_POINTER_MEASURED:
+		{
+		  VirtualMarkerRatio* virtualMarkerRatio =
+		    new VirtualMarkerRatio ();
+		  virtualMarkerRatio->weights ().resize (0);
+		   marker = virtualMarkerRatio;
+		   break;
+		 }
+
+	       case EMR_MARKER:
+	       case RELATIVE_TO_BONE:
+	       default:
+		 throw std::runtime_error ("unknown marker type");
+	       }
+
+	     try
+	       {
+		 marker->id () = convert<int> ((*itLine)[0]) - 1;
+		 marker->name () = (*itLine)[1];
+		 trimWhitespace (marker->name ());
+		 marker->color () =
+		   randomizeColorRGB ();
+		 marker->physicalColor () =
+		   randomizeColorRGB ();
+		 marker->size () = 0.;
+		 marker->optional () = true;
+
+		 marker->originMarker () =
+		   convert<int> ((*itLine)[3]) - 1;
+		 marker->longAxisMarker () =
+		   convert<int> ((*itLine)[4]) - 1;
+		 marker->planeAxisMarker () =
+		   convert<int> ((*itLine)[5]) - 1;
+
+		 // load offset?
+
+		 markerSet.markers ().push_back (marker);
+	       }
+	     catch (...)
+	       {
+		 delete marker;
+		 throw;
+	       }
+	   }
+
+	 if (!file.eof () && file.peek () != '[' && !file.eof ())
+	   loadSection (virtualMarkersVariableMapper, markerSet, file);
+       }
+   }
+
+   void
+   MarsMarkerSetFactory::loadVMJoinDefs
+   (MarkerSet& markerSet, std::ifstream& file)
+   {
+     loadSection (VMJoinDefsVariableMapper, markerSet, file);
+   }
+
+   void
+   MarsMarkerSetFactory::loadLinkages
+   (MarkerSet& markerSet, std::ifstream& file)
+   {
+     try
+       {
+	 loadSection (linkagesVariableMapper, markerSet, file);
+       }
+     catch (const std::runtime_error&)
+       {
+	 std::vector<std::vector<std::string> > values =
+	   loadUnformattedData (file);
+
+	 std::vector<std::vector<std::string> >::const_iterator itLine;
+	 for (itLine = values.begin (); itLine != values.end (); ++itLine)
+	   {
+	     if (itLine->size () != 8) //FIXME: changed from 7 to 8, extra field?!
+	       {
+		 std::ostringstream error;
+		 error
+		   << "unexpected length in linkage data"
+		   " 8 was expected but length is "
+		   << itLine->size () << ")";
+		 throw std::runtime_error (error.str ());
+	       }
+
+	     Link linkage;
+	     linkage.name () = (*itLine)[0];
+	     trimWhitespace (linkage.name ());
+	     linkage.color () =
+	       getColorFromPalette (convert<std::size_t> ((*itLine)[1]));
+	     linkage.type () = Link::LINK_UNKNOWN;
+
+	     std::istringstream ss ((*itLine)[3]);
+	     int marker1, marker2;
+	     ss >> marker1 >> marker2;
+	     linkage.marker1 () = marker1 - 1;
+	     linkage.marker2 () = marker2 - 1;
+	     linkage.minLength () = convert<double> ((*itLine)[4]);
+	     linkage.maxLength () = convert<double> ((*itLine)[5]);
+	     linkage.extraStretch () = convert<double> ((*itLine)[6]);
+	     markerSet.links ().push_back (linkage);
+	   }
+
+
+	 if (!file.eof () && file.peek () != '[' && !file.eof ())
+	   loadSection (linkagesVariableMapper, markerSet, file);
+       }
+   }
+
+   void
+   MarsMarkerSetFactory::loadSkeletonType
+   (MarkerSet& markerSet, std::ifstream& file)
+   {
+     loadSection (skeletonTypeVariableMapper, markerSet, file);
+   }
+
+   void
+   MarsMarkerSetFactory::loadCalciumModel
+   (MarkerSet& /*markerSet*/, std::ifstream& file)
+   {
+     std::string line;
+     while (!file.eof () && file.peek () != '[' && !file.eof ())
+       {
+	 std::getline (file, line);
+	 trimEndOfLine (line);
+       }
+   }
+
+   void
+   MarsMarkerSetFactory::loadHtrExportOptions
+   (MarkerSet& markerSet, std::ifstream& file)
+   {
+     loadSection (htrExportOptionsVariableMapper, markerSet, file);
+   }
+
+   void
+   MarsMarkerSetFactory::loadSegments
+   (MarkerSet& markerSet, std::ifstream& file)
+   {
+     try
+       {
+	 loadSection (segmentsVariableMapper, markerSet, file);
+       }
+     catch (const std::runtime_error&)
+       {
+	 std::vector<std::vector<std::string> > values =
+	   loadUnformattedData (file);
+
+	 std::vector<std::vector<std::string> >::const_iterator itLine;
+	 for (itLine = values.begin (); itLine != values.end (); ++itLine)
+	   {
+	     if (itLine->size () != 9)
+	       {
+		 std::ostringstream error;
+		 error
+		  << "unexpected length in segment data"
+		  " (9 was expected but length is "
+		  << itLine->size () << ")";
+		throw std::runtime_error (error.str ());
+	      }
+
+	    Segment segment;
+	    segment.id () = convert<int> ((*itLine)[0]) - 1;
+	    segment.name () = (*itLine)[1];
+	    trimWhitespace (segment.name ());
+	    // FIXME: load parent?
+	    segment.originMarker () = convert<int> ((*itLine)[3]) - 1;
+	    segment.longAxisMarker () = convert<int> ((*itLine)[4]) - 1;
+	    segment.planeAxisMarker () = convert<int> ((*itLine)[5]) - 1;
+	    segment.rotationOffset ().roll () = convert<double> ((*itLine)[6]);
+	    segment.rotationOffset ().pitch () = convert<double> ((*itLine)[6]);
+	    segment.rotationOffset ().yaw () = convert<double> ((*itLine)[6]);
+
+	    markerSet.segments ().push_back (segment);
 	  }
 
-
 	if (!file.eof () && file.peek () != '[' && !file.eof ())
-	  loadSection (linkagesVariableMapper, markerSet, file);
+	  loadSection (segmentsVariableMapper, markerSet, file);
       }
-  }
-
-  void
-  MarsMarkerSetFactory::loadSkeletonType
-  (MarkerSet& markerSet, std::ifstream& file)
-  {
-    loadSection (skeletonTypeVariableMapper, markerSet, file);
-  }
-
-  void
-  MarsMarkerSetFactory::loadHtrExportOptions
-  (MarkerSet& markerSet, std::ifstream& file)
-  {
-    loadSection (htrExportOptionsVariableMapper, markerSet, file);
-  }
-
-  void
-  MarsMarkerSetFactory::loadSegments
-  (MarkerSet& markerSet, std::ifstream& file)
-  {
-    loadSection (segmentsVariableMapper, markerSet, file);
   }
 
   void
@@ -505,6 +713,37 @@ namespace libmocap
     loadSection (personalInfoVariableMapper, markerSet, file);
   }
 
+  void
+  MarsMarkerSetFactory::loadMassModel
+  (MarkerSet& markerSet, std::ifstream& file)
+  {
+    try
+      {
+	loadSection (massModelVariableMapper, markerSet, file);
+      }
+    catch (const std::runtime_error&)
+      {
+	std::vector<std::vector<std::string> > values =
+	  loadUnformattedData (file);
+
+	std::vector<std::vector<std::string> >::const_iterator itLine;
+	for (itLine = values.begin (); itLine != values.end (); ++itLine)
+	  {
+	    if (itLine->size () != 8)
+	      {
+		std::ostringstream error;
+		error
+		  << "unexpected length in mass model data"
+		  " (8 was expected but length is "
+		  << itLine->size () << ")";
+		throw std::runtime_error (error.str ());
+	      }
+	  }
+
+	if (!file.eof () && file.peek () != '[' && !file.eof ())
+	  loadSection (massModelVariableMapper, markerSet, file);
+      }
+  }
 
   void
   MarsMarkerSetFactory::loadVersion

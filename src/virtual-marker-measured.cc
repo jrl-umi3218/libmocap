@@ -27,7 +27,10 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#include <stdexcept>
+
 #include <libmocap/abstract-virtual-marker.hh>
+#include <libmocap/marker-trajectory.hh>
 #include <libmocap/virtual-marker-measured.hh>
 
 namespace libmocap
@@ -67,6 +70,24 @@ namespace libmocap
   VirtualMarkerMeasured::clone () const
   {
     return new VirtualMarkerMeasured (*this);
+  }
+
+  void
+  VirtualMarkerMeasured::position
+  (double position[3],
+   const MarkerSet&,
+   const MarkerTrajectory& trajectory,
+   int frameId) const
+  {
+    if (frameId < 0)
+      throw std::runtime_error ("negative frame id");
+    if (frameId >= static_cast<int> (trajectory.positions ().size ()))
+      throw std::runtime_error ("frame id is too large");
+
+    //FIXME: implement this.
+    position[0] = 0.;
+    position[1] = 0.;
+    position[2] = 0.;
   }
 
   std::ostream&
