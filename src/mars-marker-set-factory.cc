@@ -623,9 +623,12 @@ namespace libmocap
 	    segment.originMarker () = convert<int> ((*itLine)[3]) - 1;
 	    segment.longAxisMarker () = convert<int> ((*itLine)[4]) - 1;
 	    segment.planeAxisMarker () = convert<int> ((*itLine)[5]) - 1;
-	    segment.rotationOffset ().roll () = convert<double> ((*itLine)[6]);
-	    segment.rotationOffset ().pitch () = convert<double> ((*itLine)[6]);
-	    segment.rotationOffset ().yaw () = convert<double> ((*itLine)[6]);
+	    segment.rotationOffset ().roll () =
+	      convert<double> ((*itLine)[6]) * M_PI / 180.;
+	    segment.rotationOffset ().pitch () =
+	      convert<double> ((*itLine)[6]) * M_PI / 180.;
+	    segment.rotationOffset ().yaw () =
+	      convert<double> ((*itLine)[6]) * M_PI / 180.;
 
 	    markerSet.segments ().push_back (segment);
 	  }
