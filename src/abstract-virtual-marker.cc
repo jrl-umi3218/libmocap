@@ -27,6 +27,7 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#include <iostream>
 #include <libmocap/abstract-virtual-marker.hh>
 
 namespace libmocap
@@ -35,16 +36,23 @@ namespace libmocap
     : AbstractMarker (),
       originMarker_ (),
       longAxisMarker_ (),
-      planeAxisMarker_ ()
-  {}
+      planeAxisMarker_ (),
+      offset_ ()
+  {
+    offset_[0] = offset_[1] = offset_[2] = 0.;
+  }
 
   AbstractVirtualMarker::AbstractVirtualMarker
   (const AbstractVirtualMarker& rhs)
     : AbstractMarker (rhs),
       originMarker_ (rhs.originMarker_),
       longAxisMarker_ (rhs.longAxisMarker_),
-      planeAxisMarker_ (rhs.planeAxisMarker_)
-  {}
+      planeAxisMarker_ (rhs.planeAxisMarker_),
+      offset_ ()
+  {
+    for (std::size_t i = 0; i < 3; ++i)
+      offset_[i] = rhs.offset_[i];
+  }
 
   AbstractVirtualMarker::~AbstractVirtualMarker ()
   {}
@@ -58,13 +66,57 @@ namespace libmocap
     originMarker_ = rhs.originMarker_;
     longAxisMarker_ = rhs.longAxisMarker_;
     planeAxisMarker_ = rhs.planeAxisMarker_;
+    for (std::size_t i = 0; i < 3; ++i)
+      offset_[i] = rhs.offset_[i];
     return *this;
+  }
+
+  const double&
+  AbstractVirtualMarker::offsetX () const
+  {
+    return offset_[0];
+  }
+
+  const double&
+  AbstractVirtualMarker::offsetY () const
+  {
+    return offset_[1];
+  }
+
+  const double&
+  AbstractVirtualMarker::offsetZ () const
+  {
+    return offset_[2];
+  }
+
+  double&
+  AbstractVirtualMarker::offsetX ()
+  {
+    return offset_[0];
+  }
+
+  double&
+  AbstractVirtualMarker::offsetY ()
+  {
+    return offset_[1];
+  }
+
+  double&
+  AbstractVirtualMarker::offsetZ ()
+  {
+    return offset_[2];
   }
 
   std::ostream&
   AbstractVirtualMarker::print (std::ostream& stream) const
   {
     AbstractMarker::print (stream);
+    stream
+      << "origin marker: " << originMarker_ << '\n'
+      << "long axis marker: " << longAxisMarker_ << '\n'
+      << "plane axis marker: " << planeAxisMarker_ << '\n'
+      << "offset: "
+      << offset_[0] << ", " << offset_[1] << ", " << offset_[2] << '\n';
     return stream;
   }
 

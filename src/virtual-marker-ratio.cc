@@ -81,18 +81,17 @@ namespace libmocap
       throw std::runtime_error ("negative frame id");
     if (frameId >= static_cast<int> (trajectory.positions ().size ()))
       throw std::runtime_error ("frame id is too large");
+
+    position[0] = offsetX ();
+    position[1] = offsetY ();
+    position[2] = offsetZ ();
+
     if (weights ().empty ())
-      {
-	position[0] = 0.;
-	position[1] = 0.;
-	position[2] = 0.;
-	return;
-      }
+      return;
     if (weights ().size () > 3)
       throw std::runtime_error ("weights vector too large");
 
     double positionMarker[3];
-    std::vector<double>::const_iterator it;
 
     if (originMarker () < 0)
       throw std::runtime_error ("negative origin marker");
@@ -100,9 +99,11 @@ namespace libmocap
       throw std::runtime_error ("origin marker id too large");
 
     markerSet.markers ()[originMarker ()]->position
-      (position, markerSet, trajectory, frameId);
-    for (it = weights_.begin (); it != weights_.end (); ++it)
-      position[it - weights_.begin ()] *= weights ()[0];
+      (positionMarker, markerSet, trajectory, frameId);
+    for (std::size_t i = 0; i < 3; ++i)
+      positionMarker[i] *= weights ()[0];
+    for (std::size_t i = 0; i < 3; ++i)
+      position[i] += positionMarker[i];
 
     if (weights ().size () == 1)
       	return;
@@ -117,9 +118,10 @@ namespace libmocap
 
     markerSet.markers ()[longAxisMarker ()]->position
       (positionMarker, markerSet, trajectory, frameId);
-    for (it = weights_.begin (); it != weights_.end (); ++it)
-      position[it - weights_.begin ()] +=
-	weights ()[1] * positionMarker[it - weights_.begin ()];
+    for (std::size_t i = 0; i < 3; ++i)
+      positionMarker[i] *= weights ()[1];
+    for (std::size_t i = 0; i < 3; ++i)
+      position[i] += positionMarker[i];
 
     if (weights ().size () == 2)
       	return;
@@ -131,9 +133,10 @@ namespace libmocap
 
     markerSet.markers ()[planeAxisMarker ()]->position
       (positionMarker, markerSet, trajectory, frameId);
-    for (it = weights_.begin (); it != weights_.end (); ++it)
-      position[it - weights_.begin ()] +=
-	weights ()[2] * positionMarker[it - weights_.begin ()];
+    for (std::size_t i = 0; i < 3; ++i)
+      positionMarker[i] *= weights ()[2];
+    for (std::size_t i = 0; i < 3; ++i)
+      position[i] += positionMarker[i];
   }
 
   std::ostream&

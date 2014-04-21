@@ -163,7 +163,7 @@ namespace libmocap
       THREE_POINTS_RATIO = 4,
       THREE_POINTS_MEASURED = 5,
       EMR_MARKER = 6,
-      ONE_POINTER_MEASURED = 7,
+      ONE_POINT_MEASURED = 7,
       RELATIVE_TO_BONE = 8
     };
 
@@ -422,12 +422,15 @@ namespace libmocap
 		  VirtualMarkerRatio* virtualMarkerRatio =
 		    new VirtualMarkerRatio ();
 		  virtualMarkerRatio->weights ().resize (2);
-		  virtualMarkerRatio->weights ()[0] =
-		    convert<double> ((*itLine)[6]);
-		  virtualMarkerRatio->weights ()[1] =
-		    convert<double> ((*itLine)[7]);
-		  virtualMarkerRatio->weights ()[2] =
-		    convert<double> ((*itLine)[8]);
+		  virtualMarkerRatio->weights ()[0] = .5;
+		  virtualMarkerRatio->weights ()[1] = .5;
+
+		  virtualMarkerRatio->offsetX () =
+		    convert<double> ((*itLine)[6]) * 1e-2;
+		  virtualMarkerRatio->offsetY () =
+		    convert<double> ((*itLine)[7]) * 1e-2;
+		  virtualMarkerRatio->offsetZ () =
+		    convert<double> ((*itLine)[8]) * 1e-2;
 		  marker = virtualMarkerRatio;
 		  break;
 		}
@@ -437,12 +440,16 @@ namespace libmocap
 		  VirtualMarkerRatio* virtualMarkerRatio =
 		    new VirtualMarkerRatio ();
 		  virtualMarkerRatio->weights ().resize (3);
-		  virtualMarkerRatio->weights ()[0] =
-		    convert<double> ((*itLine)[6]);
-		  virtualMarkerRatio->weights ()[1] =
-		    convert<double> ((*itLine)[7]);
-		  virtualMarkerRatio->weights ()[2] =
-		    convert<double> ((*itLine)[8]);
+		  virtualMarkerRatio->weights ()[0] = 1. / 3.;
+		  virtualMarkerRatio->weights ()[1] = 1. / 3.;
+		  virtualMarkerRatio->weights ()[2] = 1. / 3.;
+
+		  virtualMarkerRatio->offsetX () =
+		    convert<double> ((*itLine)[6]) * 1e-2;
+		  virtualMarkerRatio->offsetY () =
+		    convert<double> ((*itLine)[7]) * 1e-2;
+		  virtualMarkerRatio->offsetZ () =
+		    convert<double> ((*itLine)[8]) * 1e-2;
 		  marker = virtualMarkerRatio;
 		  break;
 		}
@@ -452,12 +459,15 @@ namespace libmocap
 		  VirtualMarkerMeasured* virtualMarkerMeasured =
 		    new VirtualMarkerMeasured ();
 		  virtualMarkerMeasured->offset ().resize (2);
-		  virtualMarkerMeasured->offset ()[0] =
-		    convert<double> ((*itLine)[6]);
-		  virtualMarkerMeasured->offset ()[1] =
-		    convert<double> ((*itLine)[7]);
-		  virtualMarkerMeasured->offset ()[2] =
-		    convert<double> ((*itLine)[8]);
+		  virtualMarkerMeasured->offset ()[0] = 0.;
+		  virtualMarkerMeasured->offset ()[1] = 0.;
+
+		  virtualMarkerMeasured->offsetX () =
+		    convert<double> ((*itLine)[6]) * 1e-2;
+		  virtualMarkerMeasured->offsetY () =
+		    convert<double> ((*itLine)[7]) * 1e-2;
+		  virtualMarkerMeasured->offsetZ () =
+		    convert<double> ((*itLine)[8]) * 1e-2;
 		  marker = virtualMarkerMeasured;
 		  break;
 		}
@@ -466,24 +476,36 @@ namespace libmocap
 		  VirtualMarkerMeasured* virtualMarkerMeasured =
 		    new VirtualMarkerMeasured ();
 		  virtualMarkerMeasured->offset ().resize (3);
-		  virtualMarkerMeasured->offset ()[0] =
-		    convert<double> ((*itLine)[6]);
-		  virtualMarkerMeasured->offset ()[1] =
-		    convert<double> ((*itLine)[7]);
-		  virtualMarkerMeasured->offset ()[2] =
-		    convert<double> ((*itLine)[8]);
+		  virtualMarkerMeasured->offset ()[0] = 0.;
+		  virtualMarkerMeasured->offset ()[1] = 0.;
+		  virtualMarkerMeasured->offset ()[2] = 0.;
+
+		  virtualMarkerMeasured->offsetX () =
+		    convert<double> ((*itLine)[6]) * 1e-2;
+		  virtualMarkerMeasured->offsetY () =
+		    convert<double> ((*itLine)[7]) * 1e-2;
+		  virtualMarkerMeasured->offsetZ () =
+		    convert<double> ((*itLine)[8]) * 1e-2;
 		  marker = virtualMarkerMeasured;
 		  break;
 		}
 
-	      case ONE_POINTER_MEASURED:
+	      case ONE_POINT_MEASURED:
 		{
 		  VirtualMarkerRatio* virtualMarkerRatio =
 		    new VirtualMarkerRatio ();
-		  virtualMarkerRatio->weights ().resize (0);
-		   marker = virtualMarkerRatio;
-		   break;
-		 }
+		  virtualMarkerRatio->weights ().resize (1);
+		  virtualMarkerRatio->weights ()[0] = 1.;
+
+		  virtualMarkerRatio->offsetX () =
+		    convert<double> ((*itLine)[6]) * 1e-2;
+		  virtualMarkerRatio->offsetY () =
+		    convert<double> ((*itLine)[7]) * 1e-2;
+		  virtualMarkerRatio->offsetZ () =
+		    convert<double> ((*itLine)[8]) * 1e-2;
+		  marker = virtualMarkerRatio;
+		  break;
+		}
 
 	       case EMR_MARKER:
 	       case RELATIVE_TO_BONE:

@@ -30,6 +30,7 @@
 #include <stdexcept>
 
 #include <libmocap/abstract-virtual-marker.hh>
+#include <libmocap/marker-set.hh>
 #include <libmocap/marker-trajectory.hh>
 #include <libmocap/virtual-marker-measured.hh>
 
@@ -72,10 +73,12 @@ namespace libmocap
     return new VirtualMarkerMeasured (*this);
   }
 
+
+  //FIXME: implement this properly
   void
   VirtualMarkerMeasured::position
   (double position[3],
-   const MarkerSet&,
+   const MarkerSet& markerSet,
    const MarkerTrajectory& trajectory,
    int frameId) const
   {
@@ -84,10 +87,61 @@ namespace libmocap
     if (frameId >= static_cast<int> (trajectory.positions ().size ()))
       throw std::runtime_error ("frame id is too large");
 
-    //FIXME: implement this.
-    position[0] = 0.;
-    position[1] = 0.;
-    position[2] = 0.;
+    position[0] = offsetX ();
+    position[1] = offsetY ();
+    position[2] = offsetZ ();
+
+    if (offset ().empty ())
+      return;
+    if (offset ().size () > 3)
+      throw std::runtime_error ("offset vector too large");
+
+    double positionMarker[3];
+
+    if (originMarker () < 0)
+      throw std::runtime_error ("negative origin marker");
+    if (originMarker () >= static_cast<int> (markerSet.markers ().size ()))
+      throw std::runtime_error ("origin marker id too large");
+
+    markerSet.markers ()[originMarker ()]->position
+      (positionMarker, markerSet, trajectory, frameId);
+    // for (std::size_t i = 0; i < 3; ++i)
+    //   positionMarker[i] *= offset ()[0];
+    for (std::size_t i = 0; i < 3; ++i)
+      position[i] += positionMarker[i];
+
+    if (offset ().size () == 1)
+	return;
+
+    if (longAxisMarker () < 0)
+      throw std::runtime_error ("negative long axis marker");
+    if (longAxisMarker () >= static_cast<int> (markerSet.markers ().size ()))
+      throw std::runtime_error ("long axis marker id too large");
+
+    if (!markerSet.markers ()[longAxisMarker ()])
+      throw std::runtime_error ("null long axis marker");
+
+    markerSet.markers ()[longAxisMarker ()]->position
+      (positionMarker, markerSet, trajectory, frameId);
+    // for (std::size_t i = 0; i < 3; ++i)
+    //   positionMarker[i] *= offset ()[1];
+    for (std::size_t i = 0; i < 3; ++i)
+      position[i] += positionMarker[i];
+
+    if (offset ().size () == 2)
+	return;
+
+    if (planeAxisMarker () < 0)
+      throw std::runtime_error ("negative plane axis marker");
+    if (planeAxisMarker () >= static_cast<int> (markerSet.markers ().size ()))
+      throw std::runtime_error ("plane axis marker id too large");
+
+    markerSet.markers ()[planeAxisMarker ()]->position
+      (positionMarker, markerSet, trajectory, frameId);
+    // for (std::size_t i = 0; i < 3; ++i)
+    //   positionMarker[i] *= offset ()[2];
+    for (std::size_t i = 0; i < 3; ++i)
+      position[i] += positionMarker[i];
   }
 
   std::ostream&
