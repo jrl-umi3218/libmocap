@@ -95,9 +95,16 @@ namespace libmocap
     if (!markerSet.markers ()[longAxisMarker ()])
       throw std::runtime_error ("null long axis marker");
 
+    double marker1[3];
     markerSet.markers ()[originMarker ()]->position
-      (position, markerSet, trajectory, frameId);
-    //FIXME: apply offset.
+      (marker1, markerSet, trajectory, frameId);
+
+    double marker2[3];
+    markerSet.markers ()[originMarker ()]->position
+      (marker2, markerSet, trajectory, frameId);
+
+    for (std::size_t i = 0; i < 3; ++i)
+      position[i] = marker1[i] + weight_ * (marker2[i] - marker1[i]);
   }
 
   std::ostream&

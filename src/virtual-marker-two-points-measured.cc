@@ -27,6 +27,7 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#include <cmath>
 #include <stdexcept>
 
 #include <libmocap/abstract-virtual-marker.hh>
@@ -75,7 +76,6 @@ namespace libmocap
   }
 
 
-  //FIXME: implement this properly
   void
   VirtualMarkerTwoPointsMeasured::position
   (double position[3],
@@ -98,9 +98,21 @@ namespace libmocap
     if (!markerSet.markers ()[longAxisMarker ()])
       throw std::runtime_error ("null long axis marker");
 
+    double marker1[3];
     markerSet.markers ()[originMarker ()]->position
-      (position, markerSet, trajectory, frameId);
-    //FIXME: apply offset
+      (marker1, markerSet, trajectory, frameId);
+
+    double marker2[3];
+    markerSet.markers ()[originMarker ()]->position
+      (marker2, markerSet, trajectory, frameId);
+
+    double norm = 0.;
+    for (std::size_t i = 0; i < 3; ++i)
+      norm += std::pow (marker2[i] - marker1[i], 2);
+    norm = std::sqrt (norm);
+
+    for (std::size_t i = 0; i < 3; ++i)
+      position[i] = marker1[i] + offset_ * (marker2[i] - marker1[i]) / norm;
   }
 
   std::ostream&
