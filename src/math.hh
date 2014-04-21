@@ -27,58 +27,15 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#include <iostream>
-#include <libmocap/abstract-virtual-marker.hh>
+
+#ifndef LIBMOCAP_MATH_HH
+# define LIBMOCAP_MATH_HH
+# include <string>
 
 namespace libmocap
 {
-  AbstractVirtualMarker::AbstractVirtualMarker ()
-    : AbstractMarker (),
-      originMarker_ (),
-      longAxisMarker_ (),
-      planeAxisMarker_ ()
-  {
-  }
+  void cross (double result[3], const double lhs[3], const double rhs[3]);
+  void normalize (double v[3]);
+} // end of namespace libmocap
 
-  AbstractVirtualMarker::AbstractVirtualMarker
-  (const AbstractVirtualMarker& rhs)
-    : AbstractMarker (rhs),
-      originMarker_ (rhs.originMarker_),
-      longAxisMarker_ (rhs.longAxisMarker_),
-      planeAxisMarker_ (rhs.planeAxisMarker_)
-  {
-  }
-
-  AbstractVirtualMarker::~AbstractVirtualMarker ()
-  {}
-
-  AbstractVirtualMarker&
-  AbstractVirtualMarker::operator= (const AbstractVirtualMarker& rhs)
-  {
-    if (this == &rhs)
-      return *this;
-    AbstractMarker::operator= (rhs);
-    originMarker_ = rhs.originMarker_;
-    longAxisMarker_ = rhs.longAxisMarker_;
-    planeAxisMarker_ = rhs.planeAxisMarker_;
-    return *this;
-  }
-
-  std::ostream&
-  AbstractVirtualMarker::print (std::ostream& stream) const
-  {
-    AbstractMarker::print (stream);
-    stream
-      << "origin marker: " << originMarker_ << '\n'
-      << "long axis marker: " << longAxisMarker_ << '\n'
-      << "plane axis marker: " << planeAxisMarker_ << '\n';
-    return stream;
-  }
-
-  std::ostream&
-  operator<< (std::ostream& o, const AbstractVirtualMarker& markerSet)
-  {
-    return markerSet.print (o);
-  }
-
-} // end of namespace libmocap.
+#endif //! LIBMOCAP_MATH_HH

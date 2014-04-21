@@ -50,20 +50,11 @@ namespace libmocap
     LIBMOCAP_ACCESSOR (longAxisMarker, int);
     LIBMOCAP_ACCESSOR (planeAxisMarker, int);
 
-    const double& offsetX () const;
-    const double& offsetY () const;
-    const double& offsetZ () const;
-
-    double& offsetX ();
-    double& offsetY ();
-    double& offsetZ ();
-
     virtual std::ostream& print (std::ostream& o) const;
   private:
     int originMarker_;
     int longAxisMarker_;
     int planeAxisMarker_;
-    double offset_[3];
   };
 
   LIBMOCAP_DLLEXPORT std::ostream&

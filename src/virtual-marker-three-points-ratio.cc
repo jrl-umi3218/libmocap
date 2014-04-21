@@ -34,6 +34,8 @@
 #include <libmocap/marker-set.hh>
 #include <libmocap/virtual-marker-three-points-ratio.hh>
 
+#include "math.hh"
+
 namespace libmocap
 {
   VirtualMarkerThreePointsRatio::VirtualMarkerThreePointsRatio
@@ -109,9 +111,34 @@ namespace libmocap
     if (!markerSet.markers ()[planeAxisMarker ()])
       throw std::runtime_error ("null plane axis axis marker");
 
+    double originPos[3];
+    double longAxisMarkerPos[3];
+    double planeAxisMarkerPos[3];
+
     markerSet.markers ()[originMarker ()]->position
-      (position, markerSet, trajectory, frameId);
-    //FIXME: apply the offset.
+      (originPos, markerSet, trajectory, frameId);
+    markerSet.markers ()[longAxisMarker ()]->position
+      (longAxisMarkerPos, markerSet, trajectory, frameId);
+    markerSet.markers ()[planeAxisMarker ()]->position
+      (longAxisMarkerPos, markerSet, trajectory, frameId);
+
+
+    double ox[3];
+    double oy[3];
+    double oz[3];
+
+    for (std::size_t i = 0; i < 3; ++i)
+      ox[i] = longAxisMarkerPos[i] - originPos[i];
+    for (std::size_t i = 0; i < 3; ++i)
+      oy[i] = planeAxisMarkerPos[i] - originPos[i];
+    cross (oz, ox, oy);
+
+    for (std::size_t i = 0; i < 3; ++i)
+      position[i] =
+	originPos[i]
+	+ weights_[0] * ox[i]
+	+ weights_[1] * oy[i]
+	+ weights_[2] * oz[i];
   }
 
   std::ostream&

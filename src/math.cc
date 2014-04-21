@@ -27,58 +27,23 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#include <iostream>
-#include <libmocap/abstract-virtual-marker.hh>
+#include <cmath>
+#include "math.hh"
 
 namespace libmocap
 {
-  AbstractVirtualMarker::AbstractVirtualMarker ()
-    : AbstractMarker (),
-      originMarker_ (),
-      longAxisMarker_ (),
-      planeAxisMarker_ ()
+  void cross (double result[3], const double lhs[3], const double rhs[3])
   {
+    result[0] = lhs[1] * rhs[2] - lhs[2] * rhs[1];
+    result[1] = lhs[2] * rhs[0] - lhs[0] * rhs[2];
+    result[2] = lhs[0] * rhs[1] - lhs[1] * rhs[0];
   }
 
-  AbstractVirtualMarker::AbstractVirtualMarker
-  (const AbstractVirtualMarker& rhs)
-    : AbstractMarker (rhs),
-      originMarker_ (rhs.originMarker_),
-      longAxisMarker_ (rhs.longAxisMarker_),
-      planeAxisMarker_ (rhs.planeAxisMarker_)
+  void normalize (double v[3])
   {
+    double n = std::sqrt (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    v[0] /= n;
+    v[1] /= n;
+    v[2] /= n;
   }
-
-  AbstractVirtualMarker::~AbstractVirtualMarker ()
-  {}
-
-  AbstractVirtualMarker&
-  AbstractVirtualMarker::operator= (const AbstractVirtualMarker& rhs)
-  {
-    if (this == &rhs)
-      return *this;
-    AbstractMarker::operator= (rhs);
-    originMarker_ = rhs.originMarker_;
-    longAxisMarker_ = rhs.longAxisMarker_;
-    planeAxisMarker_ = rhs.planeAxisMarker_;
-    return *this;
-  }
-
-  std::ostream&
-  AbstractVirtualMarker::print (std::ostream& stream) const
-  {
-    AbstractMarker::print (stream);
-    stream
-      << "origin marker: " << originMarker_ << '\n'
-      << "long axis marker: " << longAxisMarker_ << '\n'
-      << "plane axis marker: " << planeAxisMarker_ << '\n';
-    return stream;
-  }
-
-  std::ostream&
-  operator<< (std::ostream& o, const AbstractVirtualMarker& markerSet)
-  {
-    return markerSet.print (o);
-  }
-
-} // end of namespace libmocap.
+} // end of namespace libmocap
