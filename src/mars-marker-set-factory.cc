@@ -39,8 +39,11 @@
 #include <libmocap/abstract-virtual-marker.hh>
 #include <libmocap/link.hh>
 #include <libmocap/marker.hh>
-#include <libmocap/virtual-marker-measured.hh>
-#include <libmocap/virtual-marker-ratio.hh>
+#include <libmocap/virtual-marker-one-point-measured.hh>
+#include <libmocap/virtual-marker-three-points-measured.hh>
+#include <libmocap/virtual-marker-two-points-measured.hh>
+#include <libmocap/virtual-marker-two-points-ratio.hh>
+#include <libmocap/virtual-marker-three-points-ratio.hh>
 
 #include "mars-marker-set-factory.hh"
 #include "string.hh"
@@ -419,91 +422,46 @@ namespace libmocap
 	      {
 	      case TWO_POINTS_RATIO:
 		{
-		  VirtualMarkerRatio* virtualMarkerRatio =
-		    new VirtualMarkerRatio ();
-		  virtualMarkerRatio->weights ().resize (2);
-		  virtualMarkerRatio->weights ()[0] = .5;
-		  virtualMarkerRatio->weights ()[1] = .5;
-
-		  virtualMarkerRatio->offsetX () =
-		    convert<double> ((*itLine)[6]) * 1e-2;
-		  virtualMarkerRatio->offsetY () =
-		    convert<double> ((*itLine)[7]) * 1e-2;
-		  virtualMarkerRatio->offsetZ () =
-		    convert<double> ((*itLine)[8]) * 1e-2;
-		  marker = virtualMarkerRatio;
+		  marker =
+		    new VirtualMarkerTwoPointsRatio
+		    (convert<double> ((*itLine)[7]));
 		  break;
 		}
 
 	      case THREE_POINTS_RATIO:
 		{
-		  VirtualMarkerRatio* virtualMarkerRatio =
-		    new VirtualMarkerRatio ();
-		  virtualMarkerRatio->weights ().resize (3);
-		  virtualMarkerRatio->weights ()[0] = 1. / 3.;
-		  virtualMarkerRatio->weights ()[1] = 1. / 3.;
-		  virtualMarkerRatio->weights ()[2] = 1. / 3.;
-
-		  virtualMarkerRatio->offsetX () =
-		    convert<double> ((*itLine)[6]) * 1e-2;
-		  virtualMarkerRatio->offsetY () =
-		    convert<double> ((*itLine)[7]) * 1e-2;
-		  virtualMarkerRatio->offsetZ () =
-		    convert<double> ((*itLine)[8]) * 1e-2;
-		  marker = virtualMarkerRatio;
+		  marker =
+		    new VirtualMarkerThreePointsRatio
+		    (convert<double> ((*itLine)[6]),
+		     convert<double> ((*itLine)[7]),
+		     convert<double> ((*itLine)[8]));
 		  break;
 		}
 
 	      case TWO_POINTS_MEASURED:
 		{
-		  VirtualMarkerMeasured* virtualMarkerMeasured =
-		    new VirtualMarkerMeasured ();
-		  virtualMarkerMeasured->offset ().resize (2);
-		  virtualMarkerMeasured->offset ()[0] = 0.;
-		  virtualMarkerMeasured->offset ()[1] = 0.;
-
-		  virtualMarkerMeasured->offsetX () =
-		    convert<double> ((*itLine)[6]) * 1e-2;
-		  virtualMarkerMeasured->offsetY () =
-		    convert<double> ((*itLine)[7]) * 1e-2;
-		  virtualMarkerMeasured->offsetZ () =
-		    convert<double> ((*itLine)[8]) * 1e-2;
-		  marker = virtualMarkerMeasured;
+		  marker =
+		    new VirtualMarkerTwoPointsMeasured
+		    (convert<double> ((*itLine)[7]) * 1e-3);
 		  break;
 		}
 	      case THREE_POINTS_MEASURED:
 		{
-		  VirtualMarkerMeasured* virtualMarkerMeasured =
-		    new VirtualMarkerMeasured ();
-		  virtualMarkerMeasured->offset ().resize (3);
-		  virtualMarkerMeasured->offset ()[0] = 0.;
-		  virtualMarkerMeasured->offset ()[1] = 0.;
-		  virtualMarkerMeasured->offset ()[2] = 0.;
-
-		  virtualMarkerMeasured->offsetX () =
-		    convert<double> ((*itLine)[6]) * 1e-2;
-		  virtualMarkerMeasured->offsetY () =
-		    convert<double> ((*itLine)[7]) * 1e-2;
-		  virtualMarkerMeasured->offsetZ () =
-		    convert<double> ((*itLine)[8]) * 1e-2;
-		  marker = virtualMarkerMeasured;
+		  marker =
+		    new VirtualMarkerThreePointsMeasured
+		    (convert<double> ((*itLine)[6]) * 1e-3,
+		     convert<double> ((*itLine)[7]) * 1e-3,
+		     convert<double> ((*itLine)[8]) * 1e-3);
 		  break;
 		}
 
 	      case ONE_POINT_MEASURED:
 		{
-		  VirtualMarkerRatio* virtualMarkerRatio =
-		    new VirtualMarkerRatio ();
-		  virtualMarkerRatio->weights ().resize (1);
-		  virtualMarkerRatio->weights ()[0] = 1.;
-
-		  virtualMarkerRatio->offsetX () =
-		    convert<double> ((*itLine)[6]) * 1e-2;
-		  virtualMarkerRatio->offsetY () =
-		    convert<double> ((*itLine)[7]) * 1e-2;
-		  virtualMarkerRatio->offsetZ () =
-		    convert<double> ((*itLine)[8]) * 1e-2;
-		  marker = virtualMarkerRatio;
+		  marker =
+		    new VirtualMarkerOnePointMeasured
+		    (convert<double> ((*itLine)[6]) * 1e-3,
+		     convert<double> ((*itLine)[7]) * 1e-3,
+		     convert<double> ((*itLine)[8]) * 1e-3);
 		  break;
 		}
 

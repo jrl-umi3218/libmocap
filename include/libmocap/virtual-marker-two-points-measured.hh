@@ -28,10 +28,9 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef LIBMOCAP_VIRTUAL_MARKER_MEASURED_HH
-# define LIBMOCAP_VIRTUAL_MARKER_MEASURED_HH
+#ifndef LIBMOCAP_VIRTUAL_MARKER_TWO_POINTS_MEASURED_HH
+# define LIBMOCAP_VIRTUAL_MARKER_TWO_POINTS_MEASURED_HH
 # include <iosfwd>
-# include <vector>
 
 # include <libmocap/config.hh>
 # include <libmocap/abstract-virtual-marker.hh>
@@ -39,15 +38,16 @@
 
 namespace libmocap
 {
-  class LIBMOCAP_DLLEXPORT VirtualMarkerMeasured : public AbstractVirtualMarker
+  class LIBMOCAP_DLLEXPORT VirtualMarkerTwoPointsMeasured
+    : public AbstractVirtualMarker
   {
   public:
-    VirtualMarkerMeasured ();
-    VirtualMarkerMeasured (const VirtualMarkerMeasured&);
-    virtual ~VirtualMarkerMeasured ();
-    VirtualMarkerMeasured& operator= (const VirtualMarkerMeasured& rhs);
+    VirtualMarkerTwoPointsMeasured (const double& offset);
+    VirtualMarkerTwoPointsMeasured (const VirtualMarkerTwoPointsMeasured&);
+    virtual ~VirtualMarkerTwoPointsMeasured ();
+    VirtualMarkerTwoPointsMeasured& operator= (const VirtualMarkerTwoPointsMeasured& rhs);
 
-    LIBMOCAP_ACCESSOR (offset, std::vector<double>);
+    LIBMOCAP_ACCESSOR (offset, double);
 
     std::ostream& print (std::ostream& o) const;
 
@@ -60,12 +60,12 @@ namespace libmocap
        int frameId) const;
 
   private:
-    std::vector<double> offset_;
+    double offset_;
   };
 
   LIBMOCAP_DLLEXPORT std::ostream&
-  operator<< (std::ostream& o, const VirtualMarkerMeasured& virtualMarker);
+  operator<< (std::ostream& o, const VirtualMarkerTwoPointsMeasured& virtualMarker);
 
 } // end of namespace libmocap.
 
-#endif //! LIBMOCAP_VIRTUAL_MARKER_MEASURED_HH
+#endif //! LIBMOCAP_VIRTUAL_MARKER_TWO_POINTS_MEASURED_HH

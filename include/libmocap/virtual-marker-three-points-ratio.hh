@@ -28,8 +28,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef LIBMOCAP_VIRTUAL_MARKER_RATIO_HH
-# define LIBMOCAP_VIRTUAL_MARKER_RATIO_HH
+#ifndef LIBMOCAP_VIRTUAL_MARKER_THREE_POINTS_RATIO_HH
+# define LIBMOCAP_VIRTUAL_MARKER_THREE_POINTS_RATIO_HH
 # include <iosfwd>
 # include <vector>
 # include <libmocap/config.hh>
@@ -38,13 +38,19 @@
 
 namespace libmocap
 {
-  class LIBMOCAP_DLLEXPORT VirtualMarkerRatio : public AbstractVirtualMarker
+  class LIBMOCAP_DLLEXPORT VirtualMarkerThreePointsRatio
+    : public AbstractVirtualMarker
   {
   public:
-    VirtualMarkerRatio ();
-    VirtualMarkerRatio (const VirtualMarkerRatio&);
-    virtual ~VirtualMarkerRatio ();
-    VirtualMarkerRatio& operator= (const VirtualMarkerRatio& rhs);
+    VirtualMarkerThreePointsRatio
+      (const double& weightX,
+       const double& weightY,
+       const double& weightZ);
+
+    VirtualMarkerThreePointsRatio (const VirtualMarkerThreePointsRatio&);
+    virtual ~VirtualMarkerThreePointsRatio ();
+    VirtualMarkerThreePointsRatio&
+      operator= (const VirtualMarkerThreePointsRatio& rhs);
 
     LIBMOCAP_ACCESSOR (weights, std::vector<double>);
 
@@ -62,8 +68,9 @@ namespace libmocap
   };
 
   LIBMOCAP_DLLEXPORT std::ostream&
-  operator<< (std::ostream& o, const VirtualMarkerRatio& virtualMarker);
+  operator<< (std::ostream& o,
+	      const VirtualMarkerThreePointsRatio& virtualMarker);
 
 } // end of namespace libmocap.
 
-#endif //! LIBMOCAP_VIRTUAL_MARKER_RATIO_HH
+#endif //! LIBMOCAP_VIRTUAL_MARKER_THREE_POINTS_RATIO_HH

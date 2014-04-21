@@ -14,8 +14,11 @@ ADD_LIBRARY(
   pose.cc
   segment.cc
   string.cc
-  virtual-marker-measured.cc
-  virtual-marker-ratio.cc
+  virtual-marker-one-point-measured.cc
+  virtual-marker-two-points-measured.cc
+  virtual-marker-three-points-measured.cc
+  virtual-marker-two-points-ratio.cc
+  virtual-marker-three-points-ratio.cc
   virtual-marker-relative-to-bone.cc
   )
 SET_TARGET_PROPERTIES(

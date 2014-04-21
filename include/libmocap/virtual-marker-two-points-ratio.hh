@@ -27,67 +27,45 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#include <iostream>
-#include <libmocap/abstract-virtual-marker.hh>
+
+#ifndef LIBMOCAP_VIRTUAL_MARKER_TWO_POINTS_RATIO_HH
+# define LIBMOCAP_VIRTUAL_MARKER_TWO_POINTS_RATIO_HH
+# include <iosfwd>
+# include <libmocap/config.hh>
+# include <libmocap/abstract-virtual-marker.hh>
+# include <libmocap/util.hh>
 
 namespace libmocap
 {
-  AbstractVirtualMarker::AbstractVirtualMarker ()
-    : AbstractMarker (),
-      originMarker_ (),
-      longAxisMarker_ (),
-      planeAxisMarker_ (),
-      offset_ ()
+  class LIBMOCAP_DLLEXPORT VirtualMarkerTwoPointsRatio
+    : public AbstractVirtualMarker
   {
-    offset_[0] = offset_[1] = offset_[2] = 0.;
-  }
+  public:
+    VirtualMarkerTwoPointsRatio (const double& ratio);
+    VirtualMarkerTwoPointsRatio (const VirtualMarkerTwoPointsRatio&);
+    virtual ~VirtualMarkerTwoPointsRatio ();
+    VirtualMarkerTwoPointsRatio&
+      operator= (const VirtualMarkerTwoPointsRatio& rhs);
 
-  AbstractVirtualMarker::AbstractVirtualMarker
-  (const AbstractVirtualMarker& rhs)
-    : AbstractMarker (rhs),
-      originMarker_ (rhs.originMarker_),
-      longAxisMarker_ (rhs.longAxisMarker_),
-      planeAxisMarker_ (rhs.planeAxisMarker_),
-      offset_ ()
-  {
-    for (std::size_t i = 0; i < 3; ++i)
-      offset_[i] = rhs.offset_[i];
-  }
+    LIBMOCAP_ACCESSOR (weight, double);
 
-  AbstractVirtualMarker::~AbstractVirtualMarker ()
-  {}
+    std::ostream& print (std::ostream& o) const;
 
-  AbstractVirtualMarker&
-  AbstractVirtualMarker::operator= (const AbstractVirtualMarker& rhs)
-  {
-    if (this == &rhs)
-      return *this;
-    AbstractMarker::operator= (rhs);
-    originMarker_ = rhs.originMarker_;
-    longAxisMarker_ = rhs.longAxisMarker_;
-    planeAxisMarker_ = rhs.planeAxisMarker_;
-    for (std::size_t i = 0; i < 3; ++i)
-      offset_[i] = rhs.offset_[i];
-    return *this;
-  }
+    AbstractMarker* clone () const;
 
-  std::ostream&
-  AbstractVirtualMarker::print (std::ostream& stream) const
-  {
-    AbstractMarker::print (stream);
-    stream
-      << "origin marker: " << originMarker_ << '\n'
-      << "long axis marker: " << longAxisMarker_ << '\n'
-      << "plane axis marker: " << planeAxisMarker_ << '\n'
-      << "offset: "
-      << offset_[0] << ", " << offset_[1] << ", " << offset_[2] << '\n';
-    return stream;
-  }
+    void position
+      (double position[3],
+       const MarkerSet& markerSet,
+       const MarkerTrajectory& trajectory,
+       int frameId) const;
+  private:
+    double weight_;
+  };
 
-  std::ostream&
-  operator<< (std::ostream& o, const AbstractVirtualMarker& markerSet)
-  {
-    return markerSet.print (o);
-  }
+  LIBMOCAP_DLLEXPORT std::ostream&
+  operator<< (std::ostream& o,
+	      const VirtualMarkerTwoPointsRatio& virtualMarker);
 
 } // end of namespace libmocap.
+
+#endif //! LIBMOCAP_VIRTUAL_MARKER_TWO_POINTS_RATIO_HH

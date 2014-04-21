@@ -30,122 +30,92 @@
 #include <stdexcept>
 
 #include <libmocap/abstract-virtual-marker.hh>
-#include <libmocap/marker-set.hh>
 #include <libmocap/marker-trajectory.hh>
-#include <libmocap/virtual-marker-measured.hh>
+#include <libmocap/marker-set.hh>
+#include <libmocap/virtual-marker-three-points-ratio.hh>
 
 namespace libmocap
 {
-  VirtualMarkerMeasured::VirtualMarkerMeasured ()
+  VirtualMarkerThreePointsRatio::VirtualMarkerThreePointsRatio
+  (const double& weightX,
+   const double& weightY,
+   const double& weightZ)
     : AbstractVirtualMarker (),
-      offset_ ()
+      weights_ (3)
+  {
+    weights_[0] = weightX;
+    weights_[1] = weightY;
+    weights_[2] = weightZ;
+  }
+
+  VirtualMarkerThreePointsRatio::VirtualMarkerThreePointsRatio
+  (const VirtualMarkerThreePointsRatio& rhs)
+    : AbstractVirtualMarker (),
+      weights_ (rhs.weights_)
   {}
 
-  VirtualMarkerMeasured::VirtualMarkerMeasured
-  (const VirtualMarkerMeasured& rhs)
-    : AbstractVirtualMarker (rhs),
-      offset_ (rhs.offset_)
+  VirtualMarkerThreePointsRatio::~VirtualMarkerThreePointsRatio ()
   {}
 
-  VirtualMarkerMeasured::~VirtualMarkerMeasured ()
-  {}
-
-  VirtualMarkerMeasured&
-  VirtualMarkerMeasured::operator= (const VirtualMarkerMeasured& rhs)
+  VirtualMarkerThreePointsRatio&
+  VirtualMarkerThreePointsRatio::operator= (const VirtualMarkerThreePointsRatio& rhs)
   {
     if (&rhs == this)
       return *this;
     AbstractVirtualMarker::operator= (rhs);
-    offset_ = rhs.offset_;
+    weights_ = rhs.weights_;
     return *this;
   }
 
   std::ostream&
-  VirtualMarkerMeasured::print (std::ostream& stream) const
+  VirtualMarkerThreePointsRatio::print (std::ostream& stream) const
   {
     AbstractVirtualMarker::print (stream);
     return stream;
   }
 
   AbstractMarker*
-  VirtualMarkerMeasured::clone () const
+  VirtualMarkerThreePointsRatio::clone () const
   {
-    return new VirtualMarkerMeasured (*this);
+    return new VirtualMarkerThreePointsRatio (*this);
   }
 
-
-  //FIXME: implement this properly
   void
-  VirtualMarkerMeasured::position
-  (double position[3],
-   const MarkerSet& markerSet,
-   const MarkerTrajectory& trajectory,
-   int frameId) const
+  VirtualMarkerThreePointsRatio::position
+  (double position[3], const MarkerSet& markerSet, const MarkerTrajectory& trajectory, int frameId) const
   {
     if (frameId < 0)
       throw std::runtime_error ("negative frame id");
     if (frameId >= static_cast<int> (trajectory.positions ().size ()))
       throw std::runtime_error ("frame id is too large");
-
-    position[0] = offsetX ();
-    position[1] = offsetY ();
-    position[2] = offsetZ ();
-
-    if (offset ().empty ())
-      return;
-    if (offset ().size () > 3)
-      throw std::runtime_error ("offset vector too large");
-
-    double positionMarker[3];
-
+    if (weights ().size () != 3)
+      throw std::runtime_error ("weights vector too large");
     if (originMarker () < 0)
       throw std::runtime_error ("negative origin marker");
     if (originMarker () >= static_cast<int> (markerSet.markers ().size ()))
       throw std::runtime_error ("origin marker id too large");
-
-    markerSet.markers ()[originMarker ()]->position
-      (positionMarker, markerSet, trajectory, frameId);
-    // for (std::size_t i = 0; i < 3; ++i)
-    //   positionMarker[i] *= offset ()[0];
-    for (std::size_t i = 0; i < 3; ++i)
-      position[i] += positionMarker[i];
-
-    if (offset ().size () == 1)
-	return;
-
+    if (!markerSet.markers ()[originMarker ()])
+      throw std::runtime_error ("null long axis marker");
     if (longAxisMarker () < 0)
       throw std::runtime_error ("negative long axis marker");
     if (longAxisMarker () >= static_cast<int> (markerSet.markers ().size ()))
       throw std::runtime_error ("long axis marker id too large");
-
     if (!markerSet.markers ()[longAxisMarker ()])
       throw std::runtime_error ("null long axis marker");
-
-    markerSet.markers ()[longAxisMarker ()]->position
-      (positionMarker, markerSet, trajectory, frameId);
-    // for (std::size_t i = 0; i < 3; ++i)
-    //   positionMarker[i] *= offset ()[1];
-    for (std::size_t i = 0; i < 3; ++i)
-      position[i] += positionMarker[i];
-
-    if (offset ().size () == 2)
-	return;
-
     if (planeAxisMarker () < 0)
       throw std::runtime_error ("negative plane axis marker");
     if (planeAxisMarker () >= static_cast<int> (markerSet.markers ().size ()))
       throw std::runtime_error ("plane axis marker id too large");
+    if (!markerSet.markers ()[planeAxisMarker ()])
+      throw std::runtime_error ("null plane axis axis marker");
 
-    markerSet.markers ()[planeAxisMarker ()]->position
-      (positionMarker, markerSet, trajectory, frameId);
-    // for (std::size_t i = 0; i < 3; ++i)
-    //   positionMarker[i] *= offset ()[2];
-    for (std::size_t i = 0; i < 3; ++i)
-      position[i] += positionMarker[i];
+    markerSet.markers ()[originMarker ()]->position
+      (position, markerSet, trajectory, frameId);
+    //FIXME: apply the offset.
   }
 
   std::ostream&
-  operator<< (std::ostream& o, const VirtualMarkerMeasured& markerSet)
+  operator<< (std::ostream& o, const VirtualMarkerThreePointsRatio& markerSet)
   {
     return markerSet.print (o);
   }
