@@ -100,7 +100,7 @@ namespace libmocap
       (marker1, markerSet, trajectory, frameId);
 
     double marker2[3];
-    markerSet.markers ()[originMarker ()]->position
+    markerSet.markers ()[longAxisMarker ()]->position
       (marker2, markerSet, trajectory, frameId);
 
     for (std::size_t i = 0; i < 3; ++i)
