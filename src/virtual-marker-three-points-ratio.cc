@@ -140,12 +140,13 @@ namespace libmocap
 
     cross (oz, ox, oy);
 
+    //FIXME: should be plus and not minus... (?)
     for (std::size_t i = 0; i < 3; ++i)
       position[i] =
 	originPos[i]
-	+ weights_[0] * ox[i]
-	+ weights_[1] * oy[i]
-	+ weights_[2] * oz[i];
+	- weights_[0] * ox[i]
+	- weights_[1] * oy[i]
+	- weights_[2] * oz[i];
   }
 
   std::ostream&
