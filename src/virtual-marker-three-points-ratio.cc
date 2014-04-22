@@ -120,7 +120,7 @@ namespace libmocap
     markerSet.markers ()[longAxisMarker ()]->position
       (longAxisMarkerPos, markerSet, trajectory, frameId);
     markerSet.markers ()[planeAxisMarker ()]->position
-      (longAxisMarkerPos, markerSet, trajectory, frameId);
+      (planeAxisMarkerPos, markerSet, trajectory, frameId);
 
 
     double ox[3];
