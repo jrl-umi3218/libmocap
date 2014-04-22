@@ -46,4 +46,22 @@ namespace libmocap
     v[1] /= n;
     v[2] /= n;
   }
+
+  void dot_prod (double& result, const double lhs[3], const double rhs[3])
+  {
+    result = lhs[0] * rhs[0] + lhs[1] * rhs[1] + lhs[2] * rhs[2];
+  }
+
+  void proj (double result[3], const double lhs[3], const double rhs[3])
+  {
+    double cross_uu;
+    double cross_uv;
+
+    dot_prod (cross_uu, lhs, lhs);
+    dot_prod (cross_uv, lhs, rhs);
+
+    for (std::size_t i = 0; i < 3; ++i)
+      result[i] = cross_uv / cross_uu * lhs[i];
+  }
+
 } // end of namespace libmocap

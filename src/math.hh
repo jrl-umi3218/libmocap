@@ -36,6 +36,8 @@ namespace libmocap
 {
   void cross (double result[3], const double lhs[3], const double rhs[3]);
   void normalize (double v[3]);
+  void dot_prod (double& result, const double lhs[3], const double rhs[3]);
+  void proj (double result[3], const double lhs[3], const double rhs[3]);
 } // end of namespace libmocap
 
 #endif //! LIBMOCAP_MATH_HH
