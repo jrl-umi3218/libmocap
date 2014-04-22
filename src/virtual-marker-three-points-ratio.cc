@@ -128,25 +128,17 @@ namespace libmocap
     double oz[3];
 
     for (std::size_t i = 0; i < 3; ++i)
-      ox[i] = longAxisMarkerPos[i] - originPos[i];
-    for (std::size_t i = 0; i < 3; ++i)
-      oy[i] = planeAxisMarkerPos[i] - originPos[i];
-    cross (oz, ox, oy);
-
-    double proj_ox_oy[3];
-    double proj_ox_oz[3];
-    double proj_oy_oz[3];
-
-    proj (proj_ox_oy, ox, oy);
-    proj (proj_ox_oz, ox, oz);
-    proj (proj_oy_oz, oy, oz);
-
-    for (std::size_t i = 0; i < 3; ++i)
       {
-	oy[i] = oy[i] - proj_ox_oy[i];
-	oz[i] = oz[i] - proj_ox_oz[i] - proj_oy_oz[i];
+	ox[i] = longAxisMarkerPos[i] - originPos[i];
+	oy[i] = planeAxisMarkerPos[i] - originPos[i];
       }
 
+    double proj_ox_oy[3];
+    proj (proj_ox_oy, ox, oy);
+    for (std::size_t i = 0; i < 3; ++i)
+      oy[i] -= proj_ox_oy[i];
+
+    cross (oz, ox, oy);
 
     for (std::size_t i = 0; i < 3; ++i)
       position[i] =
