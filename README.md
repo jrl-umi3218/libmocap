@@ -26,4 +26,10 @@ These loaders have been retro-engineered using the GUI documentation
 and there is no guarantee they will work for any file.
 
 
+## Missing Features
+
+ * Segments Hierarchy not loaded
+ * Segments rotation offset not loaded
+
+
 ![rviz displaying motion capture data](doc/libmocap-viewer.png "rviz displaying motion capture data")
