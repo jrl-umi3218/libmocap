@@ -529,7 +529,8 @@ namespace libmocap
 	 std::vector<std::vector<std::string> >::const_iterator itLine;
 	 for (itLine = values.begin (); itLine != values.end (); ++itLine)
 	   {
-	     if (itLine->size () != 8) //FIXME: changed from 7 to 8, extra field?!
+	     //FIXME: can be 7 or 8, extra field?!
+	     if (itLine->size () != 7 && itLine->size () != 8)
 	       {
 		 std::ostringstream error;
 		 error
