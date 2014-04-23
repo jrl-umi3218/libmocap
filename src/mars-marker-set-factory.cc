@@ -665,7 +665,7 @@ namespace libmocap
 	      {
 		std::ostringstream error;
 		error
-		  << "unexpected length in linkage data"
+		  << "unexpected length in pose data"
 		  " 4 was expected but length is "
 		  << itLine->size () << ")";
 		throw std::runtime_error (error.str ());
