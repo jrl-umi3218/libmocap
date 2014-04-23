@@ -76,6 +76,8 @@ PKG_CONFIG_APPEND_LIBS(mocap)
 # If yes, ncurses and ROS are required.
 OPTION(ENABLE_ROS_VIEWER "If false, ros-viewer is built (ROS and ncurses required)" TRUE)
 
+HEADER_INSTALL("${HEADERS}")
+
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(tests)
 
