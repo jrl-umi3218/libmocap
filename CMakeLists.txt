@@ -36,7 +36,7 @@ IF(HAS_VISIBILITY)
 ENDIF()
 
 # FIXME: Disable this on Travis for now.
-IF(NOT $ENV{TRAVIS} EQUAL "true")
+IF(NOT $ENV{TRAVIS} STREQUAL true)
   CHECK_C_COMPILER_FLAG(-Wl,--no-undefined HAS_NO_UNDEFINED)
   IF(HAS_NO_UNDEFINED)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--no-undefined")
