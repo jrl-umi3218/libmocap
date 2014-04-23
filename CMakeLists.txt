@@ -23,6 +23,24 @@ SET(PROJECT_DESCRIPTION "libmocap")
 SET(PROJECT_URL "http://github.com/jrl-umi3218/libmocap")
 
 SET(HEADERS
+  ${CMAKE_SOURCE_DIR}/include/libmocap/virtual-marker-two-points-measured.hh
+  ${CMAKE_SOURCE_DIR}/include/libmocap/util.hh
+  ${CMAKE_SOURCE_DIR}/include/libmocap/marker-set-factory.hh
+  ${CMAKE_SOURCE_DIR}/include/libmocap/link.hh
+  ${CMAKE_SOURCE_DIR}/include/libmocap/marker.hh
+  ${CMAKE_SOURCE_DIR}/include/libmocap/virtual-marker-three-points-measured.hh
+  ${CMAKE_SOURCE_DIR}/include/libmocap/abstract-marker.hh
+  ${CMAKE_SOURCE_DIR}/include/libmocap/pose.hh
+  ${CMAKE_SOURCE_DIR}/include/libmocap/color.hh
+  ${CMAKE_SOURCE_DIR}/include/libmocap/marker-trajectory-factory.hh
+  ${CMAKE_SOURCE_DIR}/include/libmocap/virtual-marker-three-points-ratio.hh
+  ${CMAKE_SOURCE_DIR}/include/libmocap/virtual-marker-one-point-measured.hh
+  ${CMAKE_SOURCE_DIR}/include/libmocap/marker-trajectory.hh
+  ${CMAKE_SOURCE_DIR}/include/libmocap/marker-set.hh
+  ${CMAKE_SOURCE_DIR}/include/libmocap/virtual-marker-relative-to-bone.hh
+  ${CMAKE_SOURCE_DIR}/include/libmocap/virtual-marker-two-points-ratio.hh
+  ${CMAKE_SOURCE_DIR}/include/libmocap/segment.hh
+  ${CMAKE_SOURCE_DIR}/include/libmocap/abstract-virtual-marker.hh
   )
 
 SETUP_PROJECT()
