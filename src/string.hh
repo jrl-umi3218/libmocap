@@ -31,6 +31,7 @@
 #ifndef LIBMOCAP_STRING_HH
 # define LIBMOCAP_STRING_HH
 # include <string>
+# include <sstream>
 
 namespace libmocap
 {

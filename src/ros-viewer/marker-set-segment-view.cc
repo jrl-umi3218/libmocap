@@ -39,15 +39,13 @@ namespace libmocap
   MarkerSetSegmentView::MarkerSetSegmentView
   (const MarkerTrajectory& trajectory,
    const MarkerSet& markerSet,
-   int segmentId)
+   std::size_t segmentId)
     : View (),
       trajectory_ (trajectory),
       markerSet_ (markerSet),
       segmentId_ (segmentId)
   {
-    if (segmentId < 0)
-      throw std::runtime_error ("negative segment id");
-    if (segmentId >= static_cast<int> (markerSet.segments ().size ()))
+    if (segmentId >= markerSet.segments ().size ())
       throw std::runtime_error ("segment id too high");
 
     msg_.type = visualization_msgs::Marker::LINE_LIST;
@@ -62,7 +60,7 @@ namespace libmocap
     else
       msg_.ns += markerSet.segments ()[segmentId].name ();
 
-    msg_.id = 100 + segmentId;
+    msg_.id = 100 + static_cast<int> (segmentId);
     msg_.scale.x = 0.02;
     msg_.scale.y = 0.02;
     msg_.scale.z = 0.02;
@@ -118,16 +116,16 @@ namespace libmocap
   {
     msg_.action = visualization_msgs::Marker::ADD;
 
-    int originMarkerId;
-    int longAxisMarkerId;
-    int planeAxisMarkerId;
+    std::size_t originMarkerId;
+    std::size_t longAxisMarkerId;
+    std::size_t planeAxisMarkerId;
 
-    originMarkerId =
-      markerSet_.segments ()[segmentId_].originMarker ();
-    longAxisMarkerId =
-      markerSet_.segments ()[segmentId_].longAxisMarker ();
-    planeAxisMarkerId =
-      markerSet_.segments ()[segmentId_].planeAxisMarker ();
+    originMarkerId = static_cast<std::size_t>
+      (markerSet_.segments ()[segmentId_].originMarker ());
+    longAxisMarkerId = static_cast<std::size_t>
+      (markerSet_.segments ()[segmentId_].longAxisMarker ());
+    planeAxisMarkerId = static_cast<std::size_t>
+      (markerSet_.segments ()[segmentId_].planeAxisMarker ());
 
     double originMarkerPos[3];
     double longAxisMarkerPos[3];

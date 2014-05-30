@@ -40,7 +40,7 @@ namespace libmocap
   class MarkerSetNameView : public View
   {
   public:
-    MarkerSetNameView (const MarkerTrajectory&, const MarkerSet&, int id);
+    MarkerSetNameView (const MarkerTrajectory&, const MarkerSet&, std::size_t id);
     ~MarkerSetNameView ();
 
     virtual void
@@ -48,7 +48,7 @@ namespace libmocap
   private:
     const MarkerTrajectory& trajectory_;
     const MarkerSet& markerSet_;
-    int id_;
+    std::size_t id_;
   };
 } // end of namespace libmocap
 

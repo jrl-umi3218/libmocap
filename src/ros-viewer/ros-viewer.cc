@@ -34,9 +34,9 @@ namespace libmocap
       views_.push_back (new MarkerTrajectoryView (trajectory, markerSet));
       views_.push_back (new MarkerSetLinkView (trajectory, markerSet));
 
-      for (int i = 0; i < static_cast<int> (markerSet.markers ().size ()); ++i)
+      for (std::size_t i = 0; i < markerSet.markers ().size (); ++i)
 	views_.push_back (new MarkerSetNameView (trajectory, markerSet, i));
-      for (int i = 0; i < static_cast<int> (markerSet.segments ().size ()); ++i)
+      for (std::size_t i = 0; i < markerSet.segments ().size (); ++i)
 	views_.push_back (new MarkerSetSegmentView (trajectory, markerSet, i));
     }
 
@@ -58,9 +58,10 @@ namespace libmocap
     {
       msg_.markers.resize (views_.size ());
       std::vector<View*>::const_iterator it;
-      for (it = views_.begin (); it != views_.end (); ++it)
+      std::size_t idx = 0;
+      for (it = views_.begin (); it != views_.end (); ++it, ++idx)
 	if (*it)
-	  msg_.markers[it - views_.begin ()] = (*it)->markerMessage (frameId);
+	  msg_.markers[idx] = (*it)->markerMessage (frameId);
     }
 
     ros::NodeHandle& n_;
@@ -74,7 +75,7 @@ namespace libmocap
 std::string makeProgressBar (int frameId, int nFrames, int len)
 {
   std::string result;
-  result.reserve (len);
+  result.reserve (static_cast<std::size_t> (len));
 
   int progress = frameId * (len - 2) / nFrames;
 

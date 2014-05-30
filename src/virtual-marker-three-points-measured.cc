@@ -85,6 +85,11 @@ namespace libmocap
   (double position[3], const MarkerSet& markerSet,
    const MarkerTrajectory& trajectory, int frameId) const
   {
+    std::size_t originMarker_ = static_cast<std::size_t> (originMarker ());
+    std::size_t longAxisMarker_ = static_cast<std::size_t> (longAxisMarker ());
+    std::size_t planeAxisMarker_ =
+      static_cast<std::size_t> (planeAxisMarker ());
+
     if (frameId < 0)
       throw std::runtime_error ("negative frame id");
     if (frameId >= static_cast<int> (trajectory.positions ().size ()))
@@ -95,30 +100,30 @@ namespace libmocap
       throw std::runtime_error ("negative origin marker");
     if (originMarker () >= static_cast<int> (markerSet.markers ().size ()))
       throw std::runtime_error ("origin marker id too large");
-    if (!markerSet.markers ()[originMarker ()])
+    if (!markerSet.markers ()[originMarker_])
       throw std::runtime_error ("null long axis marker");
     if (longAxisMarker () < 0)
       throw std::runtime_error ("negative long axis marker");
     if (longAxisMarker () >= static_cast<int> (markerSet.markers ().size ()))
       throw std::runtime_error ("long axis marker id too large");
-    if (!markerSet.markers ()[longAxisMarker ()])
+    if (!markerSet.markers ()[longAxisMarker_])
       throw std::runtime_error ("null long axis marker");
     if (planeAxisMarker () < 0)
       throw std::runtime_error ("negative plane axis marker");
     if (planeAxisMarker () >= static_cast<int> (markerSet.markers ().size ()))
       throw std::runtime_error ("plane axis marker id too large");
-    if (!markerSet.markers ()[planeAxisMarker ()])
+    if (!markerSet.markers ()[planeAxisMarker_])
       throw std::runtime_error ("null plane axis axis marker");
 
     double originPos[3];
     double longAxisMarkerPos[3];
     double planeAxisMarkerPos[3];
 
-    markerSet.markers ()[originMarker ()]->position
+    markerSet.markers ()[originMarker_]->position
       (originPos, markerSet, trajectory, frameId);
-    markerSet.markers ()[longAxisMarker ()]->position
+    markerSet.markers ()[longAxisMarker_]->position
       (longAxisMarkerPos, markerSet, trajectory, frameId);
-    markerSet.markers ()[planeAxisMarker ()]->position
+    markerSet.markers ()[planeAxisMarker_]->position
       (planeAxisMarkerPos, markerSet, trajectory, frameId);
 
 

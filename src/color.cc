@@ -69,7 +69,9 @@ namespace libmocap
   Color randomizeColorRGB ()
   {
     Color color;
-    color.data () = rand () % std::numeric_limits<uint32_t>::max ();
+    color.data () =
+      static_cast<uint32_t> (rand ())
+      % std::numeric_limits<uint32_t>::max ();
     color.data () |= 0x000000FF;
     return color;
   }

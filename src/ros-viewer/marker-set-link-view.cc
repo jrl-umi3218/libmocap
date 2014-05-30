@@ -58,9 +58,11 @@ namespace libmocap
   void
   MarkerSetLinkView::updateMessage (int frameId, visualization_msgs::Marker& msg)
   {
-    int marker1;
-    int marker2;
-    int missingData = 0;
+    std::size_t marker1;
+    std::size_t marker2;
+    std::size_t missingData = 0;
+
+    std::size_t frameId_ = static_cast<std::size_t> (frameId);
 
     msg_.action = visualization_msgs::Marker::ADD;
 
@@ -69,7 +71,7 @@ namespace libmocap
 	std::cerr << "size mismatch (trajectory)" << std::endl;
 	return;
       }
-    if (trajectory_.positions ()[frameId].empty ())
+    if (trajectory_.positions ()[frameId_].empty ())
       {
 	std::cerr << "size mismatch (frame in trajectory)" << std::endl;
 	return;
@@ -77,13 +79,13 @@ namespace libmocap
 
     msg.points.resize (markerSet_.links ().size () * 2);
     msg.colors.resize (markerSet_.links ().size () * 2);
-    for (int i = 0; i < static_cast<int> (markerSet_.links ().size ()); ++i)
+    for (std::size_t i = 0; i < markerSet_.links ().size (); ++i)
       {
-	marker1 = markerSet_.links ()[i].marker1 ();
-	marker2 = markerSet_.links ()[i].marker2 ();
+	marker1 = static_cast<std::size_t> (markerSet_.links ()[i].marker1 ());
+	marker2 = static_cast<std::size_t> (markerSet_.links ()[i].marker2 ());
 
-	if (marker1 >= static_cast<int> (markerSet_.markers ().size ())
-	    || marker2 >= static_cast<int> (markerSet_.markers ().size ()))
+	if (marker1 >= markerSet_.markers ().size ()
+	    || marker2 >= markerSet_.markers ().size ())
 	  {
 	    std::stringstream stream;
 	    stream
@@ -102,7 +104,7 @@ namespace libmocap
 	markerSet_.markers ()[marker2]->position
 	  (position2, markerSet_, trajectory_, frameId);
 
-	int id = (i - missingData) * 2;
+	std::size_t id = (i - missingData) * 2;
 	msg.points[id].x = position1[0];
 	msg.points[id].y = position1[1];
 	msg.points[id].z = position1[2];

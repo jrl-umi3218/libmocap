@@ -27,6 +27,7 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#include <fstream>
 #include <stdexcept>
 #include <string>
 #include <libmocap/marker-trajectory-factory.hh>
@@ -52,6 +53,13 @@ namespace libmocap
   MarkerTrajectory
   MarkerTrajectoryFactory::load (const std::string& filename)
   {
+    std::ifstream file (filename.c_str ());
+    if (!file.good ())
+      {
+	std::string error =
+	  "cannot open file `" + filename + "'";
+	throw std::runtime_error (error);
+      }
     if (TrcMarkerTrajectoryFactory::canLoad (filename))
       {
 	TrcMarkerTrajectoryFactory factory;

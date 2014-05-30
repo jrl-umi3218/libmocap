@@ -38,18 +38,18 @@ namespace libmocap
   MarkerSetNameView::MarkerSetNameView
   (const MarkerTrajectory& trajectory,
    const MarkerSet& markerSet,
-   int id)
+   std::size_t id)
     : View (),
       trajectory_ (trajectory),
       markerSet_ (markerSet),
       id_ (id)
   {
-    if (id >= static_cast<int> (markerSet_.markers ().size ()))
+    if (id >= markerSet_.markers ().size ())
       throw std::runtime_error ("invalid id");
 
     msg_.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
     msg_.ns = "markers/names";
-    msg_.id = 10 + id;
+    msg_.id = 10 + static_cast<int> (id);
     msg_.scale.z = 0.05;
     if (markerSet_.markers ()[id])
       msg_.text = markerSet_.markers ()[id]->name ();
@@ -63,20 +63,22 @@ namespace libmocap
   void
   MarkerSetNameView::updateMessage (int frameId, visualization_msgs::Marker& msg)
   {
+    std::size_t frameId_ = static_cast<std::size_t> (frameId);
+
     msg_.action = visualization_msgs::Marker::ADD;
 
-    if (frameId >= static_cast<int> (trajectory_.positions ().size ()))
+    if (frameId_ >= trajectory_.positions ().size ())
       {
 	std::cerr << "size mismatch (trajectory)" << std::endl;
 	return;
       }
-    if (trajectory_.positions ()[frameId].empty ())
+    if (trajectory_.positions ()[frameId_].empty ())
       {
 	std::cerr << "size mismatch (frame in trajectory)" << std::endl;
 	return;
       }
 
-    if (id_ >= static_cast<int> (markerSet_.markers ().size ()))
+    if (id_ >= markerSet_.markers ().size ())
       {
 	std::stringstream stream;
 	stream

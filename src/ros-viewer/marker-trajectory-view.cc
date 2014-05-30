@@ -52,6 +52,8 @@ namespace libmocap
   void
   MarkerTrajectoryView::updateMessage (int frameId, visualization_msgs::Marker& msg)
   {
+    std::size_t frameId_ =static_cast<std::size_t> (frameId);
+
     msg_.action = visualization_msgs::Marker::ADD;
 
     if (frameId >= static_cast<int> (trajectory_.positions ().size ()))
@@ -59,16 +61,16 @@ namespace libmocap
 	std::cerr << "size mismatch (trajectory)" << std::endl;
 	return;
       }
-    if (trajectory_.positions ()[frameId].empty ())
+    if (trajectory_.positions ()[frameId_].empty ())
       {
 	std::cerr << "size mismatch (frame in trajectory)" << std::endl;
 	return;
       }
 
-    int missingData = 0;
+    std::size_t missingData = 0;
     msg.points.resize (markerSet_.markers ().size ());
     msg.colors.resize (markerSet_.markers ().size ());
-    for (int i = 0; i < static_cast<int> (markerSet_.markers ().size ()); ++i)
+    for (std::size_t i = 0; i < markerSet_.markers ().size (); ++i)
       {
 	if (!markerSet_.markers ()[i])
 	  {
@@ -80,7 +82,7 @@ namespace libmocap
 	double position[3];
 	marker.position (position, markerSet_, trajectory_, frameId);
 
-	int id = i - missingData;
+	std::size_t id = i - missingData;
 	msg.points[id].x = position[0];
 	msg.points[id].y = position[1];
 	msg.points[id].z = position[2];

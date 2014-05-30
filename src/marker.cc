@@ -74,17 +74,20 @@ namespace libmocap
    const MarkerTrajectory& trajectory,
    int frameId) const
   {
+    std::size_t frameId_ = static_cast<std::size_t> (frameId);
+    std::size_t id_ = static_cast<std::size_t> (id ());
+
     if (frameId < 0)
       throw std::runtime_error ("negative frame id");
     if (frameId >= static_cast<int> (trajectory.positions ().size ()))
       throw std::runtime_error ("frame id is too large");
-    if (id () < 0
-	|| id () >= static_cast<int> (trajectory.positions ()[frameId].size ()))
+    if (id () < 0 ||
+	id () >= static_cast<int> (trajectory.positions ()[frameId_].size ()))
       throw std::runtime_error ("marker id is inconsistent");
 
-    position[0] = trajectory.positions ()[frameId][1 + id () * 3 + 0];
-    position[1] = trajectory.positions ()[frameId][1 + id () * 3 + 1];
-    position[2] = trajectory.positions ()[frameId][1 + id () * 3 + 2];
+    position[0] = trajectory.positions ()[frameId_][1 + id_ * 3 + 0];
+    position[1] = trajectory.positions ()[frameId_][1 + id_ * 3 + 1];
+    position[2] = trajectory.positions ()[frameId_][1 + id_ * 3 + 2];
   }
 
   std::ostream&

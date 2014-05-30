@@ -680,7 +680,7 @@ namespace libmocap
 	    position[1] = convert<double> ((*itLine)[2]);
 	    position[2] = convert<double> ((*itLine)[3]);
 
-	    pose.positions ()[id - 1] = position;
+	    pose.positions ()[static_cast<std::size_t> (id) - 1] = position;
 	  }
 	markerSet.poses ().push_back (pose);
 

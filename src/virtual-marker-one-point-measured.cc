@@ -93,7 +93,7 @@ namespace libmocap
     if (originMarker () >= static_cast<int> (markerSet.markers ().size ()))
       throw std::runtime_error ("origin marker id too large");
 
-    markerSet.markers ()[originMarker ()]->position
+    markerSet.markers ()[static_cast<std::size_t> (originMarker ())]->position
       (position, markerSet, trajectory, frameId);
     position[0] += offset ()[0];
     position[1] += offset ()[1];

@@ -204,8 +204,9 @@ namespace libmocap
 
     trajectory.positions ().clear ();
     trajectory.positions ().resize
-      (trajectory.numFrames (),
-       std::vector<double> (1 + trajectory.numMarkers () * 3));
+      (static_cast<std::size_t> (trajectory.numFrames ()),
+       std::vector<double>
+       (1 + static_cast<std::size_t> (trajectory.numMarkers ()) * 3));
 
     while (!file.eof ())
       {
@@ -224,18 +225,17 @@ namespace libmocap
 	  }
 	trimEndOfLine (line);
 
-	int start = 0;
-	int end = 0;
+	std::size_t start = 0;
+	std::size_t end = 0;
 
 	std::vector<std::string> data;
-	while (start < static_cast<int> (line.size ())
-	       && end < static_cast<int> (line.size ()))
+	while (start < line.size () && end < line.size ())
 	  {
 	    if (isBlank (line[start]))
 	      start++;
 
 	    // no more to read
-	    if (start >= static_cast<int> (line.size ()))
+	    if (start >= line.size ())
 	      break;
 
 	    end = start;
@@ -250,6 +250,8 @@ namespace libmocap
 	  continue;
 
 	frameId = convert<int> (data[0]) - 1;
+	std::size_t frameId_ = static_cast<std::size_t> (frameId);
+
 	if (frameId < 0
 	    || frameId >= static_cast<int> (trajectory.positions ().size ()))
 	  {
@@ -262,11 +264,12 @@ namespace libmocap
 	    throw std::runtime_error (error.str ());
 	  }
 
-	int markerId = 0;
+	std::size_t markerId = 0;
 	std::vector<std::string>::const_iterator it = data.begin ();
 	for (++it; it != data.end (); ++it)
 	  {
-	    if (markerId >= 1 + trajectory.numMarkers () * 3)
+	    if (markerId >=
+		1 + static_cast<std::size_t> (trajectory.numMarkers ()) * 3)
 	      {
 		std::stringstream stream;
 		stream
@@ -278,12 +281,17 @@ namespace libmocap
 		std::cerr << stream.str () << std::endl;
 		continue;
 	      }
+
+	    // Missing marker, put NaN to signal it.
 	    if (it->empty ())
-	      trajectory.positions ()[frameId][markerId++] = nan ("");
+	      {
+		trajectory.positions ()[frameId_][markerId++] = nan ("");
+	      }
 	    else
-	      trajectory.positions ()[frameId][markerId++] = convert<double> (*it);
+	      trajectory.positions ()[frameId_][markerId++] = convert<double> (*it);
 	  }
-	if (markerId != 1 + trajectory.numMarkers () * 3)
+	if (markerId !=
+	    1 + static_cast<std::size_t> (trajectory.numMarkers ()) * 3)
 	  {
 	    std::stringstream stream;
 	    stream
@@ -294,8 +302,9 @@ namespace libmocap
 	      << " have been read";
 	    std::cerr << stream.str () << std::endl;
 
-	    while (markerId < 1 + trajectory.numMarkers () * 3)
-	      trajectory.positions ()[frameId][markerId++] = 0.;
+	    while (markerId <
+		   1 + static_cast<std::size_t> (trajectory.numMarkers ()) * 3)
+	      trajectory.positions ()[frameId_][markerId++] = 0.;
 	  }
       }
   }

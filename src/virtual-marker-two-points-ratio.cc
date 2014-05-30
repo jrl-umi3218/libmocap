@@ -80,6 +80,9 @@ namespace libmocap
   (double position[3], const MarkerSet& markerSet,
    const MarkerTrajectory& trajectory, int frameId) const
   {
+    std::size_t originMarker_ = static_cast<std::size_t> (originMarker ());
+    std::size_t longAxisMarker_ = static_cast<std::size_t> (longAxisMarker ());
+
     if (frameId < 0)
       throw std::runtime_error ("negative frame id");
     if (frameId >= static_cast<int> (trajectory.positions ().size ()))
@@ -92,15 +95,15 @@ namespace libmocap
       throw std::runtime_error ("negative long axis marker");
     if (longAxisMarker () >= static_cast<int> (markerSet.markers ().size ()))
       throw std::runtime_error ("long axis marker id too large");
-    if (!markerSet.markers ()[longAxisMarker ()])
+    if (!markerSet.markers ()[longAxisMarker_])
       throw std::runtime_error ("null long axis marker");
 
     double marker1[3];
-    markerSet.markers ()[originMarker ()]->position
+    markerSet.markers ()[originMarker_]->position
       (marker1, markerSet, trajectory, frameId);
 
     double marker2[3];
-    markerSet.markers ()[longAxisMarker ()]->position
+    markerSet.markers ()[longAxisMarker_]->position
       (marker2, markerSet, trajectory, frameId);
 
     for (std::size_t i = 0; i < 3; ++i)

@@ -39,7 +39,7 @@
 
 namespace libmocap
 {
-  class VariableMapper;
+  struct VariableMapper;
 
   class MarsMarkerSetFactory
   {
